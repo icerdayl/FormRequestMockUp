@@ -1,0 +1,18 @@
+﻿.card {
+    border: none;
+    border-radius: 15px;
+}
+
+.card-header {
+    background: white;
+    padding: 20px;
+}
+
+.table tbody tr:hover {
+    background: #f8f9fa;
+}
+
+.badge {
+    padding: 8px 12px;
+    font-size: .8rem;
+}

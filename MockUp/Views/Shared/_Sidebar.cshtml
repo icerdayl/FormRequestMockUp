@@ -1,0 +1,104 @@
+@{
+    var controller = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["Action"]?.ToString();
+}
+
+<div class="sidebar">
+
+    <div class="logo">
+
+        <i class="bi bi-window-stack"></i>
+
+        <span>Request Form</span>
+
+    </div>
+
+    <ul class="menu">
+
+        <li class="">
+
+            <a href="~/Home/Index">
+
+                <i class="bi bi-speedometer2"></i>
+
+                Dashboard
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="~/Request/Create">
+
+                <i class="bi bi-file-earmark-plus"></i>
+
+                Create Request
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="~/Request/MyRequests">
+
+                <i class="bi bi-folder2-open"></i>
+
+                My Requests
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="~/Approval/Index">
+
+                <i class="bi bi-check2-square"></i>
+
+                Approvals
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="~/Assignment/Index">
+
+                <i class="bi bi-person-workspace"></i>
+
+                Assignments
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="~/Developer/Index">
+
+                <i class="bi bi-person-gear"></i>
+
+                Developer
+
+            </a>
+
+        </li>
+
+        <li>
+
+            <a href="~/Admin/Index">
+
+                <i class="bi bi-gear"></i>
+
+                Administration
+
+            </a>
+
+        </li>
+
+    </ul>
+
+</div>

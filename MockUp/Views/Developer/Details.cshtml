@@ -1,0 +1,94 @@
+﻿@{
+    ViewData["Title"] = "Developer Task";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/developer.css" />
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow">
+
+        <div class="card-header">
+
+            <h3>Company Website Redesign</h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="mb-4">
+
+                <h5>Description</h5>
+
+                <p>
+                    Redesign the company website with a modern responsive
+                    interface and updated branding.
+                </p>
+
+            </div>
+
+            <div class="mb-4">
+
+                <h5>Current Progress</h5>
+
+                <div class="progress">
+
+                    <div class="progress-bar"
+                         style="width:60%">
+                        60%
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Update Progress
+                </label>
+
+                <select class="form-select">
+
+                    <option>0%</option>
+                    <option>25%</option>
+                    <option>50%</option>
+                    <option selected>60%</option>
+                    <option>75%</option>
+                    <option>100%</option>
+
+                </select>
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Developer Remarks
+                </label>
+
+                <textarea class="form-control"
+                          rows="5"
+                          placeholder="Enter update..."></textarea>
+
+            </div>
+
+            <button class="btn btn-success">
+
+                Save Progress
+
+            </button>
+
+            <button class="btn btn-primary">
+
+                Mark as Completed
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>

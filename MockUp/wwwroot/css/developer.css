@@ -1,0 +1,18 @@
+﻿.task-card {
+    border: none;
+    border-radius: 15px;
+    transition: .25s;
+}
+
+    .task-card:hover {
+        transform: translateY(-3px);
+    }
+
+.progress {
+    height: 20px;
+    border-radius: 20px;
+}
+
+.progress-bar {
+    font-weight: 600;
+}

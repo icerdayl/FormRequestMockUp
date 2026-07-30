@@ -1,0 +1,121 @@
+@{
+    ViewData["Title"] = "Developer Dashboard";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/developer.css" />
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2>My Assigned Requests</h2>
+
+        <span class="badge bg-primary fs-6">
+            2 Active Tasks
+        </span>
+
+    </div>
+
+    <div class="row">
+
+        <div class="col-lg-6 mb-4">
+
+            <div class="card task-card shadow-sm">
+
+                <div class="card-body">
+
+                    <h5>Company Website Redesign</h5>
+
+                    <p class="text-muted">
+                        Enhancement Request
+                    </p>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Progress
+                        </label>
+
+                        <div class="progress">
+
+                            <div class="progress-bar"
+                                 style="width:60%">
+                                60%
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <p>
+                        <strong>Due Date:</strong>
+                        August 15, 2026
+                    </p>
+
+                    <a asp-controller="Developer"
+                       asp-action="Details"
+                       class="btn btn-primary">
+
+                        View Details
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-lg-6 mb-4">
+
+            <div class="card task-card shadow-sm">
+
+                <div class="card-body">
+
+                    <h5>Payroll Portal</h5>
+
+                    <p class="text-muted">
+                        New Website
+                    </p>
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Progress
+                        </label>
+
+                        <div class="progress">
+
+                            <div class="progress-bar bg-success"
+                                 style="width:20%">
+                                20%
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <p>
+                        <strong>Due Date:</strong>
+                        August 20, 2026
+                    </p>
+
+                    <a asp-controller="Developer"
+                       asp-action="Details"
+                       class="btn btn-primary">
+
+                        View Details
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

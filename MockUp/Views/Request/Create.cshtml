@@ -1,0 +1,262 @@
+@{
+    ViewData["Title"] = "Create Request";
+}
+
+@section Styles{
+
+<link rel="stylesheet" href="~/css/request.css" />
+
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow">
+
+        <div class="card-header">
+
+            <h3>Create Website Request</h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <form>
+
+                <div class="section-header">
+
+                    <span class="section-number">
+
+                        1
+
+                    </span>
+
+                    <h5>
+
+                        Request Information
+
+                    </h5>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-8 mb-3">
+
+                        <label class="form-label">
+
+                            Request Title
+
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <input class="form-control shadow-sm" type="text">
+
+                    </div>
+
+                    <div class="col-md-4 mb-3">
+
+                        <label class="form-label">
+
+                            Request Type
+
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <select class="form-select">
+
+                            <option>Select Request Type</option>
+
+                            <option>New Website</option>
+
+                            <option>Website Enhancement</option>
+
+                            <option>Bug Fix</option>
+
+                            <option>Maintenance</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Department
+
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <input class="form-control shadow-sm"
+                               placeholder="Example: Human Resources">
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Priority
+
+                            <span class="required">*</span>
+
+                        </label>
+
+                        <select class="form-select">
+
+                            <option>Low</option>
+
+                            <option>Medium</option>
+
+                            <option>High</option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+                <hr>
+                <div class="section-header">
+
+                    <span class="section-number">
+
+                        2
+
+                    </span>
+
+                    <h5>
+
+                        Project Details
+
+                    </h5>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Project Description
+
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <textarea class="form-control"
+                              rows="5"></textarea>
+
+                    <div class="form-text">
+
+                        Describe the requested website, including its purpose and expected functionality.
+
+                    </div>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+
+                        Business Justification
+
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <textarea class="form-control"
+                              rows="4"></textarea>
+
+                    <div class="form-text">
+
+                        Explain why this website or enhancement is needed.
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Requested Completion Date
+
+                        </label>
+
+                        <input class="form-control shadow-sm"
+                               type="date">
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+
+                            Supporting Documents
+
+                            <span class="required">
+
+                                *
+                            </span>
+
+                        </label>
+
+                        <div class="upload-box">
+
+                            <i class="bi bi-cloud-arrow-up"></i>
+
+                            <p>
+
+                                Drag & Drop Files Here
+
+                            </p>
+
+                            <button class="btn btn-outline-primary">
+
+                                Browse Files
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="text-end mt-5">
+
+                    <button class="btn btn-secondary">
+
+                        Cancel
+
+                    </button>
+
+                    <button class="btn btn-warning">
+
+                        Save Draft
+
+                    </button>
+
+                    <button class="btn btn-primary">
+
+                        Submit Request
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

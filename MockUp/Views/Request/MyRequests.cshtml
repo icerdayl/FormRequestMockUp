@@ -1,0 +1,188 @@
+@{
+    ViewData["Title"] = "My Requests";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/myrequests.css" />
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h3>My Requests</h3>
+
+            <a href="/Request/Create" class="btn btn-primary">
+                New Request
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row mb-3">
+
+                <div class="col-md-4">
+
+                    <input class="form-control"
+                           placeholder="Search request...">
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <select class="form-select">
+
+                        <option>All Status</option>
+                        <option>Pending</option>
+                        <option>Approved</option>
+                        <option>Rejected</option>
+                        <option>In Progress</option>
+                        <option>Completed</option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>#</th>
+                        <th>Title</th>
+                        <th>Request Type</th>
+                        <th>Date Submitted</th>
+                        <th>Status</th>
+                        <th width="220">Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    <tr>
+
+                        <td>1</td>
+
+                        <td>Company Website Redesign</td>
+
+                        <td>Enhancement</td>
+
+                        <td>July 30, 2026</td>
+
+                        <td>
+
+                            <span class="badge bg-warning text-dark">
+
+                                Pending
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a asp-controller="Request"
+                               asp-action="Details"
+                               class="btn btn-sm btn-outline-primary">
+
+                                View
+
+                            </a>
+
+                            <button class="btn btn-sm btn-outline-success">
+                                Edit
+                            </button>
+
+                            <button class="btn btn-sm btn-outline-danger">
+                                Cancel
+                            </button>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>2</td>
+
+                        <td>Payroll Portal</td>
+
+                        <td>New Website</td>
+
+                        <td>July 24, 2026</td>
+
+                        <td>
+
+                            <span class="badge bg-success">
+
+                                Approved
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a asp-controller="Request"
+                               asp-action="Details"
+                               class="btn btn-sm btn-outline-primary">
+
+                                View
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    <tr>
+
+                        <td>3</td>
+
+                        <td>Inventory Dashboard</td>
+
+                        <td>Maintenance</td>
+
+                        <td>July 15, 2026</td>
+
+                        <td>
+
+                            <span class="badge bg-danger">
+
+                                Rejected
+
+                            </span>
+
+                        </td>
+
+                        <td>
+
+                            <a asp-controller="Request"
+                               asp-action="Details"
+                               class="btn btn-sm btn-outline-primary">
+
+                                View
+
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
