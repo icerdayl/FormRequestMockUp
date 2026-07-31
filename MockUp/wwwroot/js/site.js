@@ -1,8 +1,17 @@
-﻿const toggle = document.querySelector(".menu-toggle");
-const sidebar = document.querySelector(".sidebar");
+﻿document.addEventListener("DOMContentLoaded", function () {
 
-toggle.addEventListener("click", () => {
+    const sidebar = document.querySelector(".sidebar");
 
-    sidebar.classList.toggle("collapsed");
+    const button = document.querySelector(".menu-toggle");
+
+    if (button) {
+
+        button.addEventListener("click", function () {
+
+            sidebar.classList.toggle("show");
+
+        });
+
+    }
 
 });

@@ -6,54 +6,85 @@
 <div class="sidebar">
 
     <div class="logo">
-
         <i class="bi bi-window-stack"></i>
-
         <span>Request Form</span>
-
     </div>
 
     <ul class="menu">
 
-        <li class="">
-
-            <a href="~/Home/Index">
+        <li>
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="nav-link @(controller == "Dashboard" && action == "Index" ? "active" : "")">
 
                 <i class="bi bi-speedometer2"></i>
-
                 Dashboard
 
             </a>
-
         </li>
+
+        <!-- REQUEST MENU -->
 
         <li>
 
-            <a href="~/Request/Create">
+            <a class="nav-link d-flex justify-content-between align-items-center @(controller == "Request" ? "active" : "")"
+               data-bs-toggle="collapse"
+               href="#requestMenu"
+               role="button"
+               aria-expanded="@(controller == "Request" ? "true" : "false")">
 
-                <i class="bi bi-file-earmark-plus"></i>
+                <span>
 
-                Create Request
+                    <i class="bi bi-file-earmark-text"></i>
+
+                    Request
+
+                </span>
+
+                <i class="bi bi-chevron-down"></i>
 
             </a>
 
+            <div class="collapse @(controller == "Request" ? "show" : "")"
+                 id="requestMenu">
+
+                <ul class="nav flex-column ms-3">
+
+                    <li>
+
+                        <a asp-controller="Request"
+                           asp-action="Create"
+                           class="nav-link @(controller == "Request" && action == "Create" ? "active" : "")">
+
+                            Create Request
+
+                        </a>
+
+                    </li>
+
+                    <li>
+
+                        <a asp-controller="Request"
+                           asp-action="MyRequests"
+                           class="nav-link @(controller == "Request" && action == "MyRequests" ? "active" : "")">
+
+                            My Requests
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
         </li>
 
         <li>
 
-            <a href="~/Request/MyRequests">
-
-                <i class="bi bi-folder2-open"></i>
-
-                My Requests
-
-            </a>
-
-        </li>
-
-        <li>
-
-            <a href="~/Approval/Index">
+            <a asp-controller="Approval"
+               asp-action="Index"
+               class="nav-link @(controller == "Approval" ? "active" : "")">
 
                 <i class="bi bi-check2-square"></i>
 
@@ -65,7 +96,9 @@
 
         <li>
 
-            <a href="~/Assignment/Index">
+            <a asp-controller="Assignment"
+               asp-action="Index"
+               class="nav-link @(controller == "Assignment" ? "active" : "")">
 
                 <i class="bi bi-person-workspace"></i>
 
@@ -77,7 +110,9 @@
 
         <li>
 
-            <a href="~/Developer/Index">
+            <a asp-controller="Developer"
+               asp-action="Index"
+               class="nav-link @(controller == "Developer" ? "active" : "")">
 
                 <i class="bi bi-person-gear"></i>
 
@@ -89,7 +124,9 @@
 
         <li>
 
-            <a href="~/Admin/Index">
+            <a asp-controller="Admin"
+               asp-action="Index"
+               class="nav-link @(controller == "Admin" ? "active" : "")">
 
                 <i class="bi bi-gear"></i>
 
