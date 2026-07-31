@@ -1,9 +1,4 @@
-﻿img {
-    max-width: 100%;
-    height: auto;
-}
-
-.card {
+﻿.card {
     border: none;
     border-radius: 15px;
 }

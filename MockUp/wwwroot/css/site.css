@@ -40,32 +40,32 @@ body {
             font-size: 22px;
         }
 
-/* Desktop */
+    /* Desktop */
 
-@media(min-width:992px) {
+    @media(min-width:992px) {
 
-    .sidebar {
-        position: relative;
-        left: 0;
-    }
-}
-
-/* Tablet & Phone */
-
-@media(max-width:991px) {
-
-    .sidebar {
-        position: fixed;
-        left: -260px;
-        top: 0;
-        bottom: 0;
-        z-index: 1040;
-    }
-
-        .sidebar.show {
+        .sidebar {
+            position: relative;
             left: 0;
         }
-}
+    }
+
+    /* Tablet & Phone */
+
+    @media(max-width:991px) {
+
+        .sidebar {
+            position: fixed;
+            left: -260px;
+            top: 0;
+            bottom: 0;
+            z-index: 1040;
+        }
+
+            .sidebar.show {
+                left: 0;
+            }
+    }
 
 .logo {
     height: 70px;

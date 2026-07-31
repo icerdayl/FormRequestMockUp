@@ -1,7 +1,7 @@
 @model RequestForm.Models.Request
 
 @{
-    ViewData["Title"] = "Create Request";
+    ViewData["Title"] = "Edit Request";
 }
 
 @section Styles{
@@ -22,11 +22,13 @@
 
         <div class="card-body">
 
-            <form asp-action="Create"
+            <form asp-action="Edit"
                   method="post"
                   enctype="multipart/form-data">
 
                 @Html.AntiForgeryToken()
+
+                <input asp-for="RequestId" type="hidden" />
 
                 <div class="section-header">
 
@@ -203,11 +205,11 @@
 
                 <div class="text-end mt-5">
 
-                    <button type="button" class="btn btn-secondary">
+                    <button class="btn btn-secondary">
                         Cancel
                     </button>
 
-                    <button type="button" class="btn btn-warning">
+                    <button class="btn btn-warning">
                         Save Draft
                     </button>
 

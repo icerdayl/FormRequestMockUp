@@ -1,9 +1,4 @@
-﻿img {
-    max-width: 100%;
-    height: auto;
-}
-
-.admin-card {
+﻿.admin-card {
     border: none;
     border-radius: 15px;
     transition: .25s;

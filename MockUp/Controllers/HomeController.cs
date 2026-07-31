@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using MockUp.Models;
+using ChangeRequest.Models;
 using System.Diagnostics;
 
-namespace MockUp.Controllers
+namespace ChangeRequest.Controllers
 {
     public class HomeController : Controller
     {

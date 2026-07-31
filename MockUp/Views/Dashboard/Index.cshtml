@@ -1,6 +1,9 @@
-﻿@{
+﻿@model RequestForm.Models.ViewModels.DashboardViewModel
+
+@{
     ViewData["Title"] = "Dashboard";
 }
+
 
 <div class="container-fluid">
 
@@ -16,51 +19,75 @@
 
     </div>
 
-    <div class="row g-4 gap-4 justify-content-center">
+    <div class="row g-4 gap-4 justify-content-center ">
 
-        <div class="shadow-sm col-lg-2 p-3 card border-0 border-start border-4 border-primary">
+        <div class="shadow-sm col-lg-3 col-md-4 mb-4 py-3 px-2 card border-0 border-start border-4 border-primary">
 
             <div class="stat-card total">
 
                 <i class="bi bi-files"></i>
                 <h5>Total Requests</h5>
-                <h2>25</h2>
+                <h2>@Model.TotalRequests</h2>
 
             </div>
 
         </div>
 
-        <div class="shadow-sm col-lg-2 p-3 card border-0 border-start border-4 border-warning">
+        <div class="shadow-sm col-lg-3 col-md-4 mb-4 py-3 px-2 card border-0 border-start border-4 border-warning">
 
             <div class="stat-card pending">
 
                 <i class="bi bi-hourglass-split"></i>
                 <h5>Pending</h5>
-                <h2>10</h2>
+                <h2>@Model.PendingRequests</h2>
 
             </div>
 
         </div>
 
-        <div class="shadow-sm col-lg-2 p-3 card border-0 border-start border-4 border-success">
+        <div class="shadow-sm col-lg-3 col-md-4 mb-4 py-3 px-2 card border-0 border-start border-4 border-success">
 
             <div class="stat-card approved">
 
                 <i class="bi bi-check-circle"></i>
                 <h5>Approved</h5>
-                <h2>12</h2>
+                <h2>@Model.ApprovedRequests</h2>
 
             </div>
 
         </div>
 
-        <div class="card shadow-sm col-lg-2 p-3 card border-0 border-start border-4 border-danger">
+        <div class="card shadow-sm col-lg-3 col-md-4 mb-4 py-3 px-2 card border-0 border-start border-4 border-danger">
 
             <div class="stat-card rejected">
 
                 <i class="bi bi-x-circle"></i>
                 <h5>Rejected</h5>
-                <h2>3</h2>
+                <h2>@Model.RejectedRequests</h2>
+
+            </div>
+
+        </div>
+
+        <div class="shadow-sm col-lg-3 col-md-4 mb-4 py-3 px-2 card border-0 border-start border-4 border-secondary">
+
+            <div class="stat-card approved">
+
+                <i class="bi bi-check-circle"></i>
+                <h5>In Progress</h5>
+                <h2>@Model.InProgressRequests</h2>
+
+            </div>
+
+        </div>
+
+        <div class="shadow-sm col-lg-3 col-md-4 mb-4 py-3 px-2 card border-0 border-start border-4 border-dark">
+
+            <div class="stat-card approved">
+
+                <i class="bi bi-check-circle"></i>
+                <h5>Completed</h5>
+                <h2>@Model.CompletedRequests</h2>
 
             </div>
 
@@ -68,96 +95,209 @@
 
     </div>
 
-    <div class="card mt-5 shadow-sm">
+    <div class="card shadow mt-4">
 
-        <div class="card-header bg-white">
+        <div class="card-header">
+
+            <h5 class="mb-0">Recent Requests</h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Reference No.</th>
+                            <th>Title</th>
+                            <th>Request Type</th>
+                            <th>Status</th>
+                            <th>Date Submitted</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.RecentRequests.Any())
+                        {
+                            @foreach (var item in Model.RecentRequests)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <strong>
+                                            @item.ReferenceNumber
+                                        </strong>
+
+                                    </td>
+
+                                    <td>@item.Title</td>
+
+                                    <td>@item.RequestType?.RequestTypeName</td>
+
+                                    <td>
+
+                                        @{
+                                            var badge = item.Status?.StatusName switch
+                                            {
+                                                "Pending" => "bg-warning text-dark",
+                                                "Approved" => "bg-success",
+                                                "Rejected" => "bg-danger",
+                                                "In Progress" => "bg-primary",
+                                                "Completed" => "bg-secondary",
+                                                _ => "bg-dark"
+                                            };
+                                        }
+
+                                        <span class="badge @badge">
+
+                                            @item.Status?.StatusName
+
+                                        </span>
+
+                                    </td>
+
+                                    <td>
+
+                                        @item.DateSubmitted.ToString("MMM dd, yyyy")
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="5" class="text-center text-muted">
+
+                                    No requests submitted yet.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow mt-4">
+
+        <div class="card-header">
 
             <h5 class="mb-0">
-                Recent Website Requests
+
+                High Priority Requests
+
             </h5>
 
         </div>
 
         <div class="card-body">
 
-            <table class="table table-hover">
+            <div class="table-responsive">
 
-                <thead>
+                <table class="table table-hover align-middle">
 
-                    <tr>
+                    <thead>
 
-                        <th>ID</th>
-                        <th>Title</th>
-                        <th>Request Type</th>
-                        <th>Status</th>
-                        <th>Date</th>
+                        <tr>
 
-                    </tr>
+                            <th>Reference No.</th>
+                            <th>Title</th>
+                            <th>Request Type</th>
+                            <th>Status</th>
+                            <th>Priority</th>
+                            <th>Date Submitted</th>
 
-                </thead>
+                        </tr>
 
-                <tbody>
+                    </thead>
 
-                    <tr>
+                    <tbody>
 
-                        <td>101</td>
+                        @if (Model.HighPriorityRequests.Any())
+                        {
+                            @foreach (var item in Model.HighPriorityRequests)
+                            {
+                                <tr>
 
-                        <td>Company Website</td>
+                                    <td>
+                                        <strong>@item.ReferenceNumber</strong>
+                                    </td>
 
-                        <td>New Website</td>
+                                    <td>@item.Title</td>
 
-                        <td>
-                            <span class="badge bg-warning text-dark">
-                                Pending
-                            </span>
-                        </td>
+                                    <td>@item.RequestType?.RequestTypeName</td>
 
-                        <td>July 30, 2026</td>
+                                    <td>
+                                        @{
+                                            var badge = item.Status?.StatusName switch
+                                            {
+                                                "Pending" => "bg-warning text-dark",
+                                                "Approved" => "bg-success",
+                                                "Rejected" => "bg-danger",
+                                                "In Progress" => "bg-primary",
+                                                "Completed" => "bg-secondary",
+                                                _ => "bg-dark"
+                                            };
+                                        }
 
-                    </tr>
+                                        <span class="badge @badge">
+                                            @item.Status?.StatusName
+                                        </span>
+                                    </td>
 
-                    <tr>
+                                    <td>
+                                        <span class="badge bg-danger">
+                                            @item.Priority
+                                        </span>
+                                    </td>
 
-                        <td>102</td>
+                                    <td>
+                                        @item.DateSubmitted.ToString("MMM dd, yyyy")
+                                    </td>
 
-                        <td>HR Portal</td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
 
-                        <td>Enhancement</td>
+                                <td colspan="6" class="text-center text-muted">
 
-                        <td>
-                            <span class="badge bg-success">
-                                Approved
-                            </span>
-                        </td>
+                                    No high priority requests.
 
-                        <td>July 29, 2026</td>
+                                </td>
 
-                    </tr>
+                            </tr>
+                        }
 
-                    <tr>
+                    </tbody>
 
-                        <td>103</td>
+                </table>
 
-                        <td>Payroll System</td>
-
-                        <td>Bug Fix</td>
-
-                        <td>
-                            <span class="badge bg-danger">
-                                Rejected
-                            </span>
-                        </td>
-
-                        <td>July 28, 2026</td>
-
-                    </tr>
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
     </div>
-
 </div>
+

@@ -1,4 +1,4 @@
-namespace MockUp.Models
+namespace ChangeRequest.Models
 {
     public class ErrorViewModel
     {

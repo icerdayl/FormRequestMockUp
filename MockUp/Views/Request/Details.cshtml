@@ -1,4 +1,6 @@
-﻿@{
+﻿@model RequestForm.Models.Request
+
+@{
     ViewData["Title"] = "Request Details";
 }
 
@@ -10,138 +12,88 @@
 
     <div class="card shadow">
 
-        <div class="card-header d-flex justify-content-between">
+        <div class="card-header d-flex justify-content-between align-items-center">
 
-            <div>
+            <h3>Request Details</h3>
 
-                <h3>Website Request Details</h3>
-
-                <small class="text-muted">
-                    Request No. WR-001
-                </small>
-
-            </div>
-
-            <span class="badge bg-warning text-dark p-4 text-lg">
-                Pending Approval
-            </span>
-
-        </div>
-
-        <div class="card-body">
-
-            <div class="row">
-
-                <div class="col-md-6">
-
-                    <label class="fw-bold">
-                        Request Title
-                    </label>
-
-                    <p>Company Website Redesign</p>
-
-                </div>
-
-                <div class="col-md-6">
-
-                    <label class="fw-bold">
-                        Request Type
-                    </label>
-
-                    <p>Website Enhancement</p>
-
-                </div>
-
-            </div>
-
-            <div class="row">
-
-                <div class="col-md-6">
-
-                    <label class="fw-bold">
-                        Department
-                    </label>
-
-                    <p>Marketing</p>
-
-                </div>
-
-                <div class="col-md-6">
-
-                    <label class="fw-bold">
-                        Priority
-                    </label>
-
-                    <p>High</p>
-
-                </div>
-
-            </div>
-
-            <hr>
-
-            <h5>Project Description</h5>
-
-            <p>
-                Modernize the company website,
-                improve mobile responsiveness,
-                and update the branding.
-            </p>
-
-            <hr>
-
-            <h5>Business Justification</h5>
-
-            <p>
-                The current website no longer
-                reflects the company's branding
-                and affects customer engagement.
-            </p>
-
-            <hr>
-
-            <div class="row">
-
-                <div class="col-md-6">
-
-                    <strong>Requested Completion</strong>
-
-                    <p>August 30, 2026</p>
-
-                </div>
-
-                <div class="col-md-6">
-
-                    <strong>Submitted By</strong>
-
-                    <p>Juan Dela Cruz</p>
-
-                </div>
-
-            </div>
-
-            <hr>
-
-            <h5>Attachments</h5>
-
-            <ul>
-
-                <li>branding-guide.pdf</li>
-                <li>homepage-mockup.png</li>
-
-            </ul>
-
-        </div>
-
-        <div class="card-footer text-end">
-
-            <a asp-controller="Request"
-               asp-action="MyRequests"
+            <a asp-action="MyRequests"
                class="btn btn-secondary">
 
                 Back
 
             </a>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">Request Title</label>
+
+                    <p>@Model.Title</p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">Request Type</label>
+
+                    <p>@Model.RequestType?.RequestTypeName</p>
+
+                </div>
+
+            </div>
+
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">Department</label>
+
+                    <p>@Model.Department</p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">Priority</label>
+
+                    <p>@Model.Priority</p>
+
+                </div>
+
+            </div>
+
+            <div class="mb-4">
+
+                <label class="fw-bold">Description</label>
+
+                <p>@Model.Description</p>
+
+            </div>
+
+            <div class="row">
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">Preferred Completion Date</label>
+
+                    <p>@Model.PreferredCompletionDate.ToString("MMMM dd, yyyy")</p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">Status</label>
+
+                    <p>@Model.Status?.StatusName</p>
+
+                </div>
+
+            </div>
 
         </div>
 

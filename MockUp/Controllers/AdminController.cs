@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace MockUp.Controllers
+namespace ChangeRequest.Controllers
 {
     public class AdminController : Controller
     {

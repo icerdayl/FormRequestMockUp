@@ -1,0 +1,86 @@
+﻿using Microsoft.EntityFrameworkCore;
+using RequestForm.Models;
+
+namespace RequestForm.Data
+{
+    public class ApplicationDbContext : DbContext
+    {
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+            : base(options)
+        {
+        }
+
+        public DbSet<Request> Requests => Set<Request>();
+
+        public DbSet<RequestType> RequestTypes => Set<RequestType>();
+
+        public DbSet<Status> Statuses => Set<Status>();
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<RequestType>().HasData(
+
+                new RequestType
+                {
+                    RequestTypeId = 1,
+                    RequestTypeName = "New Website"
+                },
+
+                new RequestType
+                {
+                    RequestTypeId = 2,
+                    RequestTypeName = "Enhancement"
+                },
+
+                new RequestType
+                {
+                    RequestTypeId = 3,
+                    RequestTypeName = "Bug Fix"
+                },
+
+                new RequestType
+                {
+                    RequestTypeId = 4,
+                    RequestTypeName = "Maintenance"
+                }
+
+            );
+
+            modelBuilder.Entity<Status>().HasData(
+
+                new Status
+                {
+                    StatusId = 1,
+                    StatusName = "Pending"
+                },
+
+                new Status
+                {
+                    StatusId = 2,
+                    StatusName = "Approved"
+                },
+
+                new Status
+                {
+                    StatusId = 3,
+                    StatusName = "Rejected"
+                },
+
+                new Status
+                {
+                    StatusId = 4,
+                    StatusName = "In Progress"
+                },
+
+                new Status
+                {
+                    StatusId = 5,
+                    StatusName = "Completed"
+                }
+
+            );
+        }
+    }
+}

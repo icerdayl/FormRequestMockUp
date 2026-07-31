@@ -1,3 +1,5 @@
+@model IEnumerable<RequestForm.Models.Request>
+
 @{
     ViewData["Title"] = "My Requests";
 }
@@ -54,7 +56,7 @@
 
                     <tr>
 
-                        <th>#</th>
+                        <th>Ref. #</th>
                         <th>Title</th>
                         <th>Request Type</th>
                         <th>Date Submitted</th>
@@ -67,109 +69,78 @@
 
                 <tbody>
 
-                    <tr>
+                    @if (Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
 
-                        <td>1</td>
+                                <td>@item.ReferenceNumber</td>
 
-                        <td>Company Website Redesign</td>
+                                <td>@item.Title</td>
 
-                        <td>Enhancement</td>
+                                <td>@item.RequestType?.RequestTypeName</td>
 
-                        <td>July 30, 2026</td>
+                                <td>@item.DateSubmitted.ToString("MMM dd, yyyy")</td>
 
-                        <td>
+                                <td>
+                                    @{
+                                        var badge = item.Status?.StatusName switch
+                                        {
+                                            "Pending" => "bg-warning text-dark",
+                                            "Approved" => "bg-success",
+                                            "Rejected" => "bg-danger",
+                                            "In Progress" => "bg-info",
+                                            "Completed" => "bg-primary",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
 
-                            <span class="badge bg-warning text-dark">
-                                Pending
-                            </span>
+                                    <span class="badge @badge">
+                                        @item.Status?.StatusName
+                                    </span>
 
-                        </td>
+                                </td>
 
-                        <td>
+                                <td>
 
-                            <a asp-controller="Request"
-                               asp-action="Details"
-                               class="btn btn-sm btn-outline-primary">
+                                    <a asp-action="Details"
+                                       asp-route-id="@item.RequestId"
+                                       class="btn btn-sm btn-outline-primary">
 
-                                View
+                                        View
 
-                            </a>
+                                    </a>
 
-                            <button class="btn btn-sm btn-outline-success">
-                                Edit
-                            </button>
+                                    <a asp-action="Edit"
+                                       asp-route-id="@item.RequestId"
+                                       class="btn btn-sm btn-outline-success">
 
-                            <button class="btn btn-sm btn-outline-danger">
-                                Cancel
-                            </button>
+                                        Edit
 
-                        </td>
+                                    </a>
 
-                    </tr>
+                                    <a asp-action="Delete"
+                                       asp-route-id="@item.RequestId"
+                                       class="btn btn-sm btn-outline-danger">
 
-                    <tr>
+                                        Delete
 
-                        <td>2</td>
+                                    </a>
 
-                        <td>Payroll Portal</td>
+                                </td>
 
-                        <td>New Website</td>
-
-                        <td>July 24, 2026</td>
-
-                        <td>
-
-                            <span class="badge bg-success">
-                                Approved
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a asp-controller="Request"
-                               asp-action="Details"
-                               class="btn btn-sm btn-outline-primary">
-
-                                View
-
-                            </a>
-
-                        </td>
-
-                    </tr>
-
-                    <tr>
-
-                        <td>3</td>
-
-                        <td>Inventory Dashboard</td>
-
-                        <td>Maintenance</td>
-
-                        <td>July 15, 2026</td>
-
-                        <td>
-
-                            <span class="badge bg-danger">
-                                Rejected
-                            </span>
-
-                        </td>
-
-                        <td>
-
-                            <a asp-controller="Request"
-                               asp-action="Details"
-                               class="btn btn-sm btn-outline-primary">
-
-                                View
-
-                            </a>
-
-                        </td>
-
-                    </tr>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No requests found.
+                            </td>
+                        </tr>
+                    }
 
                 </tbody>
 
