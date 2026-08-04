@@ -51,7 +51,14 @@
                         </label>
 
                         <input asp-for="Title"
+                               id="Title"
                                class="form-control shadow-sm" />
+
+                        <small id="titleCounter" class="text-muted d-block mt-1">
+                            0 / 15 words
+                        </small>
+
+                        <span id="titleError" class="text-danger"></span>
 
                         <span asp-validation-for="Title"
                               class="text-danger"></span>
@@ -153,8 +160,19 @@
                     </label>
 
                     <textarea asp-for="Description"
+                              id="Description"
                               class="form-control"
                               rows="5"></textarea>
+
+                    <small id="descriptionCounter"
+                           class="text-muted d-block mt-1">
+
+                        0 / 50 words
+
+                    </small>
+
+                    <span id="descriptionError"
+                          class="text-danger"></span>
 
                     <div class="form-text">
                         Describe the requested website, including its purpose and expected functionality.
@@ -192,8 +210,10 @@
                             <p>Drag & Drop Files Here</p>
 
                             <input type="file"
-                                   multiple
-                                   class="form-control">
+                                   id="Attachment"
+                                   name="Attachment"
+                                   class="form-control"
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
 
                         </div>
 
@@ -203,8 +223,12 @@
 
                 <div class="text-end mt-5">
 
-                    <button type="button" class="btn btn-secondary">
+                    <button type="button"
+                            class="btn btn-secondary"
+                            onclick="location.href='@Url.Action("MyRequests", "Request")'">
+
                         Cancel
+
                     </button>
 
                     <button type="button" class="btn btn-warning">
@@ -227,3 +251,9 @@
     </div>
 
 </div>
+
+@section Scripts{
+
+    <script src="~/js/request-validation.js"></script>
+
+}
