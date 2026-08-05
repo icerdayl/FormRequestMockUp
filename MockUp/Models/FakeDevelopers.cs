@@ -4,9 +4,9 @@
     {
         public static List<string> Developers => new()
         {
-            "Help Desk",
+            "Help Desk (me)",
             "John Cruz",
-            "Jane Santos",
+            "Lebron James",
             "Michael Reyes",
             "Sarah Lopez",
             "Kevin Flores"

@@ -24,31 +24,60 @@
 
         <div class="card-body">
 
-            <div class="row mb-3">
+            <form method="get" class="row mb-3">
 
                 <div class="col-md-4">
 
                     <input class="form-control"
-                           placeholder="Search request...">
+                           name="search"
+                           value="@ViewBag.Search"
+                           placeholder="Search request..." />
 
                 </div>
 
                 <div class="col-md-3">
 
-                    <select class="form-select">
+                    <select class="form-select"
+                            name="status">
 
-                        <option>All Status</option>
-                        <option>Pending</option>
-                        <option>Approved</option>
-                        <option>Rejected</option>
-                        <option>In Progress</option>
-                        <option>Completed</option>
+                        <option value="All">All Status</option>
+
+                        <option value="Pending">Pending</option>
+
+                        <option value="Approved">Approved</option>
+
+                        <option value="Rejected">Rejected</option>
+
+                        <option value="In Progress">In Progress</option>
+
+                        <option value="Completed">Completed</option>
 
                     </select>
 
                 </div>
 
-            </div>
+                <div class="col-md-2">
+
+                    <button class="btn btn-primary w-100">
+
+                        Search
+
+                    </button>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <a asp-action="MyRequests"
+                       class="btn btn-secondary w-100">
+
+                        Clear
+
+                    </a>
+
+                </div>
+
+            </form>
 
             <table class="table table-hover align-middle">
 

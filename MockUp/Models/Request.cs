@@ -33,6 +33,8 @@ namespace RequestForm.Models
 
         public string? AttachmentPath { get; set; }
 
+        //public string? HelpDeskRemarks { get; set; }
+
         public int StatusId { get; set; }
 
         public DateTime DateSubmitted { get; set; }
@@ -45,5 +47,8 @@ namespace RequestForm.Models
 
         public ICollection<RequestAssignment> RequestAssignments { get; set; }
             = new List<RequestAssignment>();
+
+        public ICollection<RequestApproval> RequestApprovals { get; set; }
+            = new List<RequestApproval>();
     }
 }

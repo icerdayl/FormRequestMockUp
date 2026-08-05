@@ -19,6 +19,7 @@ namespace RequestForm.Data
 
         public DbSet<RequestAssignment> RequestAssignments { get; set; }
 
+        public DbSet<RequestApproval> RequestApprovals => Set<RequestApproval>();
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

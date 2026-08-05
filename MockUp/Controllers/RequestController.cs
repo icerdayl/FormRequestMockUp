@@ -54,9 +54,36 @@ namespace RequestForm.Controllers
             return RedirectToAction(nameof(MyRequests));
         }
 
-        public async Task<IActionResult> MyRequests()
+        public async Task<IActionResult> MyRequests(string search, string status)
         {
-            var requests = await _requestService.GetAll();
+            var query = _context.Requests
+                .Include(r => r.Status)
+                .Include(r => r.RequestType)
+                .AsQueryable();
+
+            // Later, filter by logged-in user here
+            // query = query.Where(r => r.RequestedBy == currentUser);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(r =>
+                    r.Title.Contains(search) ||
+                    r.ReferenceNumber.Contains(search));
+            }
+
+            if (!string.IsNullOrWhiteSpace(status) &&
+                status != "All")
+            {
+                query = query.Where(r =>
+                    r.Status!.StatusName == status);
+            }
+
+            var requests = await query
+                .OrderByDescending(r => r.DateSubmitted)
+                .ToListAsync();
+
+            ViewBag.Search = search;
+            ViewBag.Status = status;
 
             return View(requests);
         }

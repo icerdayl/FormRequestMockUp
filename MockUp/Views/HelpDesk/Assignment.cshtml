@@ -1,20 +1,181 @@
-﻿<h2>Help Desk - Assignment</h2>
-@model IEnumerable<RequestForm.Models.Request>
+﻿@model RequestForm.Models.ViewModels.AssignmentPageViewModel
 
 @{
-    ViewData["Title"] = "Assignment";
+    ViewData["Title"] = "My Requests";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/myrequests.css" />
 }
 
 <div class="container-fluid">
 
     <div class="card shadow">
 
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h3>Approved Requests</h3>
+
+        </div>
+
+        <div class="card-body">
+
+            <form method="get" class="row mb-3">
+
+                <div class="col-md-4">
+
+                    <input class="form-control"
+                           name="search"
+                           value="@ViewBag.Search"
+                           placeholder="Search request..." />
+
+                </div>
+
+                <div class="col-md-3">
+
+                    <select class="form-select"
+                            name="status">
+
+                        <option value="All">All Status</option>
+
+                        <option value="Approved"
+                                selected="@(ViewBag.Status == "Approved")">
+                            Approved
+                        </option>
+
+                        <option value="In Progress"
+                                selected="@(ViewBag.Status == "In Progress")">
+                            In Progress
+                        </option>
+
+                        <option value="Completed"
+                                selected="@(ViewBag.Status == "Completed")">
+                            Completed
+                        </option>
+
+                    </select>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <button class="btn btn-primary w-100">
+
+                        Search
+
+                    </button>
+
+                </div>
+
+                <div class="col-md-2">
+
+                    <a asp-action="Assignment"
+                       class="btn btn-secondary w-100">
+
+                        Clear
+
+                    </a>
+
+                </div>
+
+            </form>
+
+            <table class="table table-hover align-middle">
+
+                <thead>
+
+                    <tr>
+
+                        <th>Ref. #</th>
+                        <th>Title</th>
+                        <th>Request Type</th>
+                        <th>Date Submitted</th>
+                        <th>Status</th>
+                        <th width="220">Action</th>
+
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    @if (Model.ApprovedRequests.Any())
+                    {
+                        @foreach (var item in Model.ApprovedRequests)
+                        {
+                            <tr>
+
+                                <td>@item.ReferenceNumber</td>
+
+                                <td>@item.Title</td>
+
+                                <td>@item.RequestType?.RequestTypeName</td>
+
+                                <td>@item.DateSubmitted.ToString("MMM dd, yyyy")</td>
+
+                                <td>
+                                    @{
+                                        var badge = item.Status?.StatusName switch
+                                        {
+                                            "Pending" => "bg-warning text-dark",
+                                            "Approved" => "bg-success",
+                                            "Rejected" => "bg-danger",
+                                            "In Progress" => "bg-info",
+                                            "Completed" => "bg-primary",
+                                            _ => "bg-secondary"
+                                        };
+                                    }
+
+                                    <span class="badge @badge">
+                                        @item.Status?.StatusName
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                   <button type="button"
+                                            class="btn btn-sm btn-primary"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#assignModal"
+                                            data-requestid="@item.RequestId">
+
+                                        Assign
+
+                                    </button>
+                                                                       
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="6" class="text-center text-muted py-4">
+                                No requests found.
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+       
+
+    </div>
+
+    <div class="card shadow mt-4">
+
         <div class="card-header d-flex justify-content-between">
 
-            <h3>Request Assignment</h3>
+            <h3>Assigned Requests</h3>
 
-            <span class="badge bg-primary">
-                @Model.Count() Request(s)
+            <span class="badge bg-success">
+                @Model.AssignedRequests.Count Request(s)
             </span>
 
         </div>
@@ -31,9 +192,9 @@
 
                             <th>Reference No.</th>
                             <th>Title</th>
-                            <th>Priority</th>
-                            <th>Status</th>
-                            <th>Assigned To</th>
+                            <th>Developer</th>
+                            <th>Assigned By</th>
+                            <th>Assigned Date</th>
                             <th width="150">Action</th>
 
                         </tr>
@@ -42,52 +203,32 @@
 
                     <tbody>
 
-                        @foreach (var item in Model)
+                        @foreach (var item in Model.AssignedRequests)
                         {
+                            var currentAssignment = item.RequestAssignments
+                                .FirstOrDefault(a => a.IsCurrent);
+
                             <tr>
 
                                 <td>@item.ReferenceNumber</td>
 
                                 <td>@item.Title</td>
 
-                                <td>
+                                <td>@currentAssignment?.AssignedTo</td>
 
-                                    <span class="badge bg-danger">
-                                        @item.Priority
-                                    </span>
+                                <td>@currentAssignment?.AssignedBy</td>
 
-                                </td>
+                                <td>@currentAssignment?.AssignedDate.ToString("MMM dd, yyyy")</td>
 
                                 <td>
 
-                                    @item.Status?.StatusName
-
-                                </td>
-
-                                <td>
-                                    @if (item.RequestAssignments != null && item.RequestAssignments.Any())
-                                    {
-                                        var assignment = item.RequestAssignments
-                                            .OrderByDescending(x => x.AssignedDate)
-                                            .First();
-
-                                        @assignment.AssignedTo
-                                    }
-                                    else
-                                    {
-                                        <span class="text-muted">Help Desk</span>
-                                    }
-
-                                </td>
-
-                                <td>
-
-                                    <button class="btn btn-primary btn-sm"
+                                    <button type="button"
+                                            class="btn btn-sm btn-primary"
                                             data-bs-toggle="modal"
                                             data-bs-target="#assignModal"
                                             data-requestid="@item.RequestId">
 
-                                        Assign
+                                        ReAssign
 
                                     </button>
 
@@ -110,23 +251,25 @@
 
 <partial name="_AssignDeveloperModal" />
 
-@section Scripts {
+@section Scripts{
 
     <script>
 
-        const assignModal = document.getElementById('assignModal');
+        const assignModal =
+            document.getElementById('assignModal');
 
         assignModal.addEventListener('show.bs.modal', function (event) {
 
             const button = event.relatedTarget;
 
-            const requestId = button.getAttribute('data-requestid');
+            const requestId =
+                button.getAttribute("data-requestid");
 
-            document.getElementById("RequestId").value = requestId;
+            document.getElementById("RequestId").value =
+                requestId;
 
         });
 
     </script>
 
 }
-

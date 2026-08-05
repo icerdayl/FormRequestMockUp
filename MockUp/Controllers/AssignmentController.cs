@@ -1,27 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using RequestForm.Data;
 
 namespace RequestForm.Controllers
 {
     public class AssignmentController : Controller
     {
-        private readonly ApplicationDbContext _context;
-
-        public AssignmentController(ApplicationDbContext context)
+        public IActionResult Index()
         {
-            _context = context;
-        }
-
-        public async Task<IActionResult> Index()
-        {
-            var requests = await _context.Requests
-                .Include(r => r.Status)
-                .Include(r => r.RequestType)
-                .Include(r => r.RequestAssignments)
-                .ToListAsync();
-
-            return View(requests);
+            return View();
         }
     }
 }

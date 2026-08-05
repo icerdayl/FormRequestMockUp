@@ -84,8 +84,7 @@
 
         <li>
 
-            <a class="nav-link d-flex justify-content-between align-items-center
-                @(controller == "HelpDesk" ? "active" : "")"
+            <a class="nav-link d-flex justify-content-between align-items-center @(controller == "HelpDesk" ? "active" : "")"
                data-bs-toggle="collapse"
                href="#helpDeskMenu"
                role="button"
@@ -112,7 +111,7 @@
 
                         <a asp-controller="HelpDesk"
                            asp-action="Dashboard"
-                           class="nav-link">
+                           class="nav-link @(controller == "HelpDesk" && action == "Dashboard" ? "active" : "")">
 
                             Dashboard
 
@@ -127,18 +126,6 @@
                            class="nav-link @(controller == "HelpDesk" && action == "RequestList" ? "active" : "")">
 
                             Request List
-
-                        </a>
-
-                    </li>
-
-                    <li>
-
-                        <a asp-controller="HelpDesk"
-                           asp-action="ApprovalList"
-                           class="nav-link @(controller == "HelpDesk" && action == "ApprovalList" ? "active" : "")">
-
-                            Approval List
 
                         </a>
 

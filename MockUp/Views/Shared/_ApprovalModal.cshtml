@@ -1,0 +1,73 @@
+﻿<div class="modal fade"
+     id="approvalModal"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Confirm Action
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <p id="approvalMessage">Do you confirm this action?</p>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+
+                    Cancel
+
+                </button>
+
+                <form id="approvalForm"
+                      asp-action="UpdateStatus"
+                      asp-controller="HelpDesk"
+                      method="post">
+
+                    @Html.AntiForgeryToken()
+
+                    <input type="hidden"
+                           id="RequestId"
+                           name="RequestId" />
+
+                    <input type="hidden"
+                           id="status"
+                           name="status" />
+
+                    <input type="hidden"
+                           id="Remarks"
+                           name="Remarks" />
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Confirm
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RequestForm.Data;
 
@@ -11,9 +12,11 @@ using RequestForm.Data;
 namespace ChangeRequest.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260805054314_AddHelpDeskRemarks")]
+    partial class AddHelpDeskRemarks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,6 +46,9 @@ namespace ChangeRequest.Migrations
 
                     b.Property<string>("Description")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("HelpDeskRemarks")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("PreferredCompletionDate")
@@ -76,39 +82,6 @@ namespace ChangeRequest.Migrations
                     b.HasIndex("StatusId");
 
                     b.ToTable("Requests");
-                });
-
-            modelBuilder.Entity("RequestForm.Models.RequestApproval", b =>
-                {
-                    b.Property<int>("ApprovalId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ApprovalId"));
-
-                    b.Property<string>("ApprovedBy")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Decision")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("DecisionDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Remarks")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("RequestId")
-                        .HasColumnType("int");
-
-                    b.HasKey("ApprovalId");
-
-                    b.HasIndex("RequestId");
-
-                    b.ToTable("RequestApprovals");
                 });
 
             modelBuilder.Entity("RequestForm.Models.RequestAssignment", b =>
@@ -247,17 +220,6 @@ namespace ChangeRequest.Migrations
                     b.Navigation("Status");
                 });
 
-            modelBuilder.Entity("RequestForm.Models.RequestApproval", b =>
-                {
-                    b.HasOne("RequestForm.Models.Request", "Request")
-                        .WithMany("RequestApprovals")
-                        .HasForeignKey("RequestId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Request");
-                });
-
             modelBuilder.Entity("RequestForm.Models.RequestAssignment", b =>
                 {
                     b.HasOne("RequestForm.Models.Request", "Request")
@@ -271,8 +233,6 @@ namespace ChangeRequest.Migrations
 
             modelBuilder.Entity("RequestForm.Models.Request", b =>
                 {
-                    b.Navigation("RequestApprovals");
-
                     b.Navigation("RequestAssignments");
                 });
 #pragma warning restore 612, 618
