@@ -20,7 +20,9 @@
 
         <div class="card-body">
 
-            <form method="get" class="row mb-3">
+            <form method="get"
+                  id="filterForm"
+                  class="row mb-3">
 
                 <div class="col-md-4">
 
@@ -34,7 +36,8 @@
                 <div class="col-md-3">
 
                     <select class="form-select"
-                            name="status">
+                            name="status"
+                            onchange="document.getElementById('filterForm').submit();">
 
                         <option value="All">All Status</option>
 
@@ -54,16 +57,6 @@
                         </option>
 
                     </select>
-
-                </div>
-
-                <div class="col-md-2">
-
-                    <button class="btn btn-primary w-100">
-
-                        Search
-
-                    </button>
 
                 </div>
 
@@ -251,22 +244,27 @@
 
 <partial name="_AssignDeveloperModal" />
 
-@section Scripts{
+@section Scripts {
 
     <script>
 
-        const assignModal =
-            document.getElementById('assignModal');
+        let timer;
 
-        assignModal.addEventListener('show.bs.modal', function (event) {
+        const form =
+            document.getElementById("filterForm");
 
-            const button = event.relatedTarget;
+        const search =
+            document.querySelector("input[name='search']");
 
-            const requestId =
-                button.getAttribute("data-requestid");
+        search.addEventListener("keyup", function () {
 
-            document.getElementById("RequestId").value =
-                requestId;
+            clearTimeout(timer);
+
+            timer = setTimeout(function () {
+
+                form.submit();
+
+            }, 500);
 
         });
 

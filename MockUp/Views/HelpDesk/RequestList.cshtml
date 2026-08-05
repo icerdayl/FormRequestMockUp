@@ -20,7 +20,9 @@
 
         <div class="card-body">
 
-            <form method="get" class="row mb-3">
+            <form method="get"
+                  id="filterForm"
+                  class="row mb-3">
 
                 <div class="col-md-4">
 
@@ -34,7 +36,8 @@
                 <div class="col-md-3">
 
                     <select class="form-select"
-                            name="status">
+                            name="status"
+                            onchange="document.getElementById('filterForm').submit();">
 
                         <option value="All">All Status</option>
 
@@ -66,17 +69,7 @@
                     </select>
 
                 </div>
-
-                <div class="col-md-2">
-
-                    <button class="btn btn-primary w-100">
-
-                        Search
-
-                    </button>
-
-                </div>
-
+                                
                 <div class="col-md-2">
 
                     <a asp-action="RequestList"
@@ -204,28 +197,27 @@
 
 <partial name="_ApprovalModal" />
 
-@section Scripts{
+@section Scripts {
 
     <script>
 
-        document.querySelectorAll(".approval-btn").forEach(btn => {
+        let timer;
 
-            btn.addEventListener("click", function() {
+        const form =
+            document.getElementById("filterForm");
 
-                document.getElementById("RequestId").value =
-                    this.dataset.id;
+        const search =
+            document.querySelector("input[name='search']");
 
-                document.getElementById("status").value =
-                    this.dataset.action;
+        search.addEventListener("keyup", function () {
 
-                document.getElementById("Remarks").value =
-                    document.querySelector("textarea[name='Remarks']").value;
+            clearTimeout(timer);
 
-                document.getElementById("approvalMessage").innerText =
-                    "Are you sure you want to " +
-                    this.dataset.action.toLowerCase() +
-                    " this request?";
-            });
+            timer = setTimeout(function () {
+
+                form.submit();
+
+            }, 500);
 
         });
 

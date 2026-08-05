@@ -58,16 +58,6 @@
 
                 <div class="col-md-2">
 
-                    <button class="btn btn-primary w-100">
-
-                        Search
-
-                    </button>
-
-                </div>
-
-                <div class="col-md-2">
-
                     <a asp-action="MyRequests"
                        class="btn btn-secondary w-100">
 
@@ -180,3 +170,31 @@
     </div>
 
 </div>
+
+@section Scripts{
+
+    <script>
+
+        let timer;
+
+        const form =
+            document.getElementById("filterForm");
+
+        const search =
+            document.querySelector("input[name='search']");
+
+        search.addEventListener("keyup", function () {
+
+            clearTimeout(timer);
+
+            timer = setTimeout(function () {
+
+                form.submit();
+
+            }, 500);
+
+        });
+
+    </script>
+
+}
