@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using RequestForm.Models;
 
 namespace RequestForm.Data
@@ -15,6 +16,8 @@ namespace RequestForm.Data
         public DbSet<RequestType> RequestTypes => Set<RequestType>();
 
         public DbSet<Status> Statuses => Set<Status>();
+
+        public DbSet<RequestAssignment> RequestAssignments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

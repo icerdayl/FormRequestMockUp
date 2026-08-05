@@ -80,31 +80,85 @@
 
         </li>
 
-        <li>
-
-            <a asp-controller="Approval"
-               asp-action="Index"
-               class="nav-link @(controller == "Approval" ? "active" : "")">
-
-                <i class="bi bi-check2-square"></i>
-
-                Approvals
-
-            </a>
-
-        </li>
+        <!-- HELP DESK MENU -->
 
         <li>
 
-            <a asp-controller="Assignment"
-               asp-action="Index"
-               class="nav-link @(controller == "Assignment" ? "active" : "")">
+            <a class="nav-link d-flex justify-content-between align-items-center
+                @(controller == "HelpDesk" ? "active" : "")"
+               data-bs-toggle="collapse"
+               href="#helpDeskMenu"
+               role="button"
+               aria-expanded="@(controller == "HelpDesk" ? "true" : "false")">
 
-                <i class="bi bi-person-workspace"></i>
+                <span>
 
-                Assignments
+                    <i class="bi bi-headset"></i>
+
+                    Help Desk
+
+                </span>
+
+                <i class="bi bi-chevron-down"></i>
 
             </a>
+
+            <div class="collapse @(controller == "HelpDesk" ? "show" : "")"
+                 id="helpDeskMenu">
+
+                <ul class="nav flex-column ms-3">
+
+                    <li>
+
+                        <a asp-controller="HelpDesk"
+                           asp-action="Dashboard"
+                           class="nav-link">
+
+                            Dashboard
+
+                        </a>
+
+                    </li>
+
+                    <li>
+
+                        <a asp-controller="HelpDesk"
+                           asp-action="RequestList"
+                           class="nav-link @(controller == "HelpDesk" && action == "RequestList" ? "active" : "")">
+
+                            Request List
+
+                        </a>
+
+                    </li>
+
+                    <li>
+
+                        <a asp-controller="HelpDesk"
+                           asp-action="ApprovalList"
+                           class="nav-link @(controller == "HelpDesk" && action == "ApprovalList" ? "active" : "")">
+
+                            Approval List
+
+                        </a>
+
+                    </li>
+
+                    <li>
+
+                        <a asp-controller="HelpDesk"
+                           asp-action="Assignment"
+                           class="nav-link @(controller == "HelpDesk" && action == "Assignment" ? "active" : "")">
+
+                            Assignment
+
+                        </a>
+
+                    </li>
+
+                </ul>
+
+            </div>
 
         </li>
 

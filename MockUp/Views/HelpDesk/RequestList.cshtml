@@ -1,0 +1,108 @@
+﻿<h2>Help Desk - Request List</h2>
+
+@model IEnumerable<RequestForm.Models.Request>
+
+@{
+    ViewData["Title"] = "Help Desk - Request List";
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow">
+
+        <div class="card-header d-flex justify-content-between">
+
+            <h3>All Requests</h3>
+
+            <span class="badge bg-primary">
+
+                @Model.Count() Request(s)
+
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Reference No.</th>
+                            <th>Title</th>
+                            <th>Type</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Date Submitted</th>
+                            <th width="220">Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    <strong>@item.ReferenceNumber</strong>
+                                </td>
+
+                                <td>@item.Title</td>
+
+                                <td>@item.RequestType?.RequestTypeName</td>
+
+                                <td>
+
+                                    @if (item.Priority == "High")
+                                    {
+                                        <span class="badge bg-danger">High</span>
+                                    }
+                                    else if (item.Priority == "Medium")
+                                    {
+                                        <span class="badge bg-warning text-dark">Medium</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-success">Low</span>
+                                    }
+
+                                </td>
+
+                                <td>@item.Status?.StatusName</td>
+
+                                <td>@item.DateSubmitted.ToString("MMM dd, yyyy")</td>
+
+                                <td>
+
+                                    <a asp-action="Details"
+                                       asp-controller="Request"
+                                       asp-route-id="@item.RequestId"
+                                       class="btn btn-outline-primary btn-sm">
+
+                                        Review
+
+                                    </a>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

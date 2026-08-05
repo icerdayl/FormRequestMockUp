@@ -1,0 +1,132 @@
+﻿<h2>Help Desk - Assignment</h2>
+@model IEnumerable<RequestForm.Models.Request>
+
+@{
+    ViewData["Title"] = "Assignment";
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow">
+
+        <div class="card-header d-flex justify-content-between">
+
+            <h3>Request Assignment</h3>
+
+            <span class="badge bg-primary">
+                @Model.Count() Request(s)
+            </span>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Reference No.</th>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Assigned To</th>
+                            <th width="150">Action</th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>@item.ReferenceNumber</td>
+
+                                <td>@item.Title</td>
+
+                                <td>
+
+                                    <span class="badge bg-danger">
+                                        @item.Priority
+                                    </span>
+
+                                </td>
+
+                                <td>
+
+                                    @item.Status?.StatusName
+
+                                </td>
+
+                                <td>
+                                    @if (item.RequestAssignments != null && item.RequestAssignments.Any())
+                                    {
+                                        var assignment = item.RequestAssignments
+                                            .OrderByDescending(x => x.AssignedDate)
+                                            .First();
+
+                                        @assignment.AssignedTo
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Help Desk</span>
+                                    }
+
+                                </td>
+
+                                <td>
+
+                                    <button class="btn btn-primary btn-sm"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#assignModal"
+                                            data-requestid="@item.RequestId">
+
+                                        Assign
+
+                                    </button>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<partial name="_AssignDeveloperModal" />
+
+@section Scripts {
+
+    <script>
+
+        const assignModal = document.getElementById('assignModal');
+
+        assignModal.addEventListener('show.bs.modal', function (event) {
+
+            const button = event.relatedTarget;
+
+            const requestId = button.getAttribute('data-requestid');
+
+            document.getElementById("RequestId").value = requestId;
+
+        });
+
+    </script>
+
+}
+

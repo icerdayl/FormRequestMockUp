@@ -42,5 +42,8 @@ namespace RequestForm.Models
 
         [ForeignKey(nameof(StatusId))]
         public Status? Status { get; set; }
+
+        public ICollection<RequestAssignment> RequestAssignments { get; set; }
+            = new List<RequestAssignment>();
     }
 }

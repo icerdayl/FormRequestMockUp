@@ -36,14 +36,12 @@ if (title) {
 
 }
 
-// Description Validation
+//Description Validation
 
 const description = document.getElementById("Description");
-const descriptionCounter =
-    document.getElementById("descriptionCounter");
+const descriptionCounter = document.getElementById("descriptionCounter");
 
-const descriptionError =
-    document.getElementById("descriptionError");
+const descriptionError = document.getElementById("descriptionError");
 
 if (description) {
 
@@ -97,7 +95,7 @@ if (fileInput) {
 
         if (!allowed.includes(extension)) {
 
-            alert("Only PDF, Excel, Word, JPG and PNG files are allowed.");
+            showMessage("Only PDF, Excel, Word, JPG and PNG files are allowed.");;
 
             this.value = "";
 
@@ -107,7 +105,7 @@ if (fileInput) {
 
         if (file.size > 3 * 1024 * 1024) {
 
-            alert("Maximum file size is 3 MB.");
+            showMessage("Maximum file size is 3 MB.");;
 
             this.value = "";
 
@@ -120,6 +118,8 @@ if (fileInput) {
 const form = document.querySelector("form");
 
 form.addEventListener("submit", function (e) {
+
+    e.preventDefault();
 
     let valid = true;
 
@@ -135,6 +135,12 @@ form.addEventListener("submit", function (e) {
 
     }
 
+    if (countWords(title.value) === 0) {
+
+        valid = false;
+
+    }
+
     if (countWords(description.value) > 50) {
 
         descriptionError.textContent =
@@ -144,18 +150,24 @@ form.addEventListener("submit", function (e) {
 
     }
 
-    if (!valid) {
+    if (countWords(description.value) === 0) {
 
-        e.preventDefault();
+        valid = false;
+
+    }
+
+    if (!valid) {
 
         return;
 
     }
 
-    if (!confirm("Are you sure you want to submit this request?")) {
+    showConfirm(
+        "Are you sure you want to submit this request?",
+        function () {
 
-        e.preventDefault();
+            form.submit();
 
-    }
+        });
 
 });

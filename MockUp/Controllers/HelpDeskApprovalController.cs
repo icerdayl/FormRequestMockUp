@@ -4,11 +4,11 @@ using RequestForm.Data;
 
 namespace RequestForm.Controllers
 {
-    public class AssignmentController : Controller
+    public class HelpDeskApprovalController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public AssignmentController(ApplicationDbContext context)
+        public HelpDeskApprovalController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -16,9 +16,9 @@ namespace RequestForm.Controllers
         public async Task<IActionResult> Index()
         {
             var requests = await _context.Requests
-                .Include(r => r.Status)
                 .Include(r => r.RequestType)
-                .Include(r => r.RequestAssignments)
+                .Include(r => r.Status)
+                .OrderByDescending(r => r.DateSubmitted)
                 .ToListAsync();
 
             return View(requests);
