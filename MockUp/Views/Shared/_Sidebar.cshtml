@@ -106,19 +106,7 @@
                  id="helpDeskMenu">
 
                 <ul class="nav flex-column ms-3">
-
-                    <li>
-
-                        <a asp-controller="HelpDesk"
-                           asp-action="Dashboard"
-                           class="nav-link @(controller == "HelpDesk" && action == "Dashboard" ? "active" : "")">
-
-                            Dashboard
-
-                        </a>
-
-                    </li>
-
+                                       
                     <li>
 
                         <a asp-controller="HelpDesk"
@@ -146,6 +134,39 @@
                 </ul>
 
             </div>
+
+        </li>
+        
+        <!-- SUPERVISOR -->
+
+        <li>
+
+            <a asp-controller="Supervisor"
+               asp-action="Index"
+               class="nav-link @(controller == "Supervisor" ? "active" : "")">
+
+                <i class="bi bi-person-check"></i>
+
+                Supervisor
+
+            </a>
+
+        </li>
+
+
+        <!-- MANAGER -->
+
+        <li>
+
+            <a asp-controller="Manager"
+               asp-action="Index"
+               class="nav-link @(controller == "Manager" ? "active" : "")">
+
+                <i class="bi bi-person-check-fill"></i>
+
+                Manager
+
+            </a>
 
         </li>
 

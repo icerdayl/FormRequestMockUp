@@ -8,6 +8,12 @@ namespace RequestForm.Interfaces
 
         Task<Request?> GetById(int id);
 
+        Task<List<RequestType>> GetRequestTypes();
+
+        Task<List<Request>> GetMyRequests(
+            string? search,
+            string? status);
+
         Task Create(Request request);
 
         Task Update(Request request);

@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace ChangeRequest.Views.HelpDeskApproval
+namespace ChangeRequest.Views.Supervisor
 {
     public class IndexModel : PageModel
     {

@@ -268,6 +268,18 @@
 
         });
 
+            const assignModal = document.getElementById("assignModal");
+
+        assignModal.addEventListener("show.bs.modal", function (event) {
+
+            const button = event.relatedTarget;
+
+            const requestId = button.getAttribute("data-requestid");
+
+            assignModal.querySelector("input[name='RequestId']").value = requestId;
+
+        });
+
     </script>
 
 }

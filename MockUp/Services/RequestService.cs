@@ -74,5 +74,43 @@ namespace RequestForm.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<List<Request>> GetMyRequests(
+    string? search,
+    string? status)
+        {
+            var query = _context.Requests
+                .Include(r => r.Status)
+                .Include(r => r.RequestType)
+                .AsQueryable();
+
+            // Later, filter by logged-in user here
+            // query = query.Where(r => r.RequestedBy == currentUser);
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(r =>
+                    r.Title.Contains(search) ||
+                    r.ReferenceNumber.Contains(search));
+            }
+
+            if (!string.IsNullOrWhiteSpace(status) &&
+                status != "All")
+            {
+                query = query.Where(r =>
+                    r.Status!.StatusName == status);
+            }
+
+            return await query
+                .OrderByDescending(r => r.DateSubmitted)
+                .ToListAsync();
+        }
+        public async Task<List<RequestType>> GetRequestTypes()
+        {
+            return await _context.RequestTypes
+                .OrderBy(r => r.RequestTypeName)
+                .ToListAsync();
+        }
+
     }
 }

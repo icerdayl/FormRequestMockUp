@@ -1,0 +1,183 @@
+﻿@model RequestForm.Models.Request
+
+@{
+    ViewData["Title"] = "Review Request";
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h3>Request Details</h3>
+
+            <a asp-action="Index"
+               class="btn btn-secondary">
+
+                Back
+
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">
+                        Request Title
+                    </label>
+
+                    <p>@Model.Title</p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">
+                        Request Type
+                    </label>
+
+                    <p>
+                        @Model.RequestType?.RequestTypeName
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">
+                        Department
+                    </label>
+
+                    <p>@Model.Department</p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">
+                        Priority
+                    </label>
+
+                    <p>@Model.Priority</p>
+
+                </div>
+
+            </div>
+
+
+            <div class="mb-4">
+
+                <label class="fw-bold">
+                    Description
+                </label>
+
+                <p>@Model.Description</p>
+
+            </div>
+
+
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">
+                        Preferred Completion Date
+                    </label>
+
+                    <p>
+                        @Model.PreferredCompletionDate.ToString("MMMM dd, yyyy")
+                    </p>
+
+                </div>
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">
+                        Status
+                    </label>
+
+                    <p>
+                        @Model.Status?.StatusName
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <hr />
+
+
+            <div class="card mt-4">
+
+                <div class="card-header">
+
+                    <h5>Supervisor Decision</h5>
+
+                </div>
+
+                <div class="card-body">
+
+                    <form asp-controller="Supervisor"
+                          asp-action="UpdateStatus"
+                          method="post">
+
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="RequestId"
+                               value="@Model.RequestId" />
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Remarks
+                            </label>
+
+                            <textarea class="form-control"
+                                      name="remarks"
+                                      rows="4"></textarea>
+
+                        </div>
+
+
+                        <button type="submit"
+                                name="decision"
+                                value="Approved"
+                                class="btn btn-success">
+
+                            Approve
+
+                        </button>
+
+
+                        <button type="submit"
+                                name="decision"
+                                value="Rejected"
+                                class="btn btn-danger">
+
+                            Reject
+
+                        </button>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

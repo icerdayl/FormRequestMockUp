@@ -1,9 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace ChangeRequest.Views.HelpDesk
+namespace ChangeRequest.Views.Manager
 {
-    public class DashboardModel : PageModel
+    public class IndexModel : PageModel
     {
         public void OnGet()
         {

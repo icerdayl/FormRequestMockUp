@@ -63,27 +63,38 @@ namespace RequestForm.Data
                 new Status
                 {
                     StatusId = 2,
-                    StatusName = "Approved"
+                    StatusName = "Approved by Help Desk"
                 },
 
                 new Status
                 {
                     StatusId = 3,
-                    StatusName = "Rejected"
+                    StatusName = "Approved by Supervisor"
                 },
 
                 new Status
                 {
                     StatusId = 4,
-                    StatusName = "In Progress"
+                    StatusName = "Approved by Manager"
                 },
 
                 new Status
                 {
                     StatusId = 5,
+                    StatusName = "Rejected"
+                },
+
+                new Status
+                {
+                    StatusId = 6,
+                    StatusName = "In Progress"
+                },
+
+                new Status
+                {
+                    StatusId = 7,
                     StatusName = "Completed"
                 }
-
             );
         }
     }
