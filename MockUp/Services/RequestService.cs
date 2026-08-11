@@ -58,6 +58,7 @@ namespace RequestForm.Services
             existing.RequestTypeId = request.RequestTypeId;
             existing.Department = request.Department;
             existing.Priority = request.Priority;
+            existing.StartDate = request.StartDate;
             existing.PreferredCompletionDate = request.PreferredCompletionDate;
 
             await _context.SaveChangesAsync();

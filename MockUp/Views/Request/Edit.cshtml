@@ -187,16 +187,41 @@
                     <div class="col-md-6">
 
                         <label class="form-label">
+                            Start Date
+
+                            <span class="required">*</span>
+                        </label>
+
+                        <input asp-for="StartDate"
+                               id="StartDate"
+                               type="date"
+                               class="form-control shadow-sm" />
+
+                        <span asp-validation-for="StartDate"
+                              class="text-danger"></span>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <label class="form-label">
                             Requested Completion Date
 
                             <span class="required">*</span>
                         </label>
 
                         <input asp-for="PreferredCompletionDate"
+                               id="PreferredCompletionDate"
                                type="date"
                                class="form-control shadow-sm"
                                min="@DateTime.Today.ToString("yyyy-MM-dd")" />
+
+                        <span id="dateOrderError" class="text-danger"></span>
                     </div>
+
+                </div>
+
+                <div class="row">
 
                     <div class="col-md-6">
 

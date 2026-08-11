@@ -29,6 +29,8 @@ namespace RequestForm.Models
         [Required]
         public string Description { get; set; } = string.Empty;
 
+        public DateTime? StartDate { get; set; }
+
         public DateTime PreferredCompletionDate { get; set; }
 
         public string? AttachmentPath { get; set; }

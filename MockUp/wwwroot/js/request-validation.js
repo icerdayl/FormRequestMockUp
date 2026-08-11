@@ -115,6 +115,35 @@ if (fileInput) {
 
 }
 
+// Start Date / Due Date order validation
+
+const startDateInput = document.getElementById("StartDate");
+const dueDateInput = document.getElementById("PreferredCompletionDate");
+const dateOrderError = document.getElementById("dateOrderError");
+
+function syncDueDateMin() {
+
+    if (!startDateInput || !dueDateInput || !startDateInput.value)
+        return;
+
+    dueDateInput.min = startDateInput.value;
+
+    if (dueDateInput.value && dueDateInput.value < startDateInput.value) {
+
+        dueDateInput.value = startDateInput.value;
+
+    }
+
+}
+
+if (startDateInput) {
+
+    startDateInput.addEventListener("change", syncDueDateMin);
+
+    syncDueDateMin();
+
+}
+
 const form = document.querySelector("form");
 
 form.addEventListener("submit", function (e) {
@@ -151,6 +180,23 @@ form.addEventListener("submit", function (e) {
     }
 
     if (countWords(description.value) === 0) {
+
+        valid = false;
+
+    }
+
+    if (dateOrderError) {
+        dateOrderError.textContent = "";
+    }
+
+    if (startDateInput && dueDateInput &&
+        startDateInput.value && dueDateInput.value &&
+        dueDateInput.value < startDateInput.value) {
+
+        if (dateOrderError) {
+            dateOrderError.textContent =
+                "Completion date cannot be earlier than the start date.";
+        }
 
         valid = false;
 

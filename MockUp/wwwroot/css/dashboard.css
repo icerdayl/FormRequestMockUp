@@ -1,0 +1,156 @@
+/* ==========================================
+   COMPACT STAT CARDS (4 per row)
+   ========================================== */
+
+.stat-card-compact {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+}
+
+.stat-card-compact i {
+    font-size: 1.25rem;
+    margin-bottom: 2px;
+}
+
+.stat-card-compact h5 {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    color: #6c757d;
+    margin-bottom: 0;
+}
+
+.stat-card-compact h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0;
+}
+
+/* ==========================================
+   DEADLINE INDICATOR BADGES
+   ========================================== */
+
+.deadline-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 0.8rem;
+}
+
+.deadline-overdue {
+    background-color: #f8d7da;
+    color: #842029;
+}
+
+.deadline-due-soon {
+    background-color: #fff3cd;
+    color: #664d03;
+}
+
+.deadline-on-track {
+    background-color: #d1e7dd;
+    color: #0f5132;
+}
+
+/* ==========================================
+   TASK TIMELINE (GANTT-LITE)
+   ========================================== */
+
+.timeline-wrapper {
+    position: relative;
+    padding-top: 28px;
+}
+
+.timeline-scale {
+    position: relative;
+    height: 22px;
+    margin-bottom: 8px;
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.timeline-scale span {
+    position: absolute;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+.timeline-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.timeline-label {
+    width: 220px;
+    flex-shrink: 0;
+    padding-right: 12px;
+    font-size: 0.85rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.timeline-track {
+    position: relative;
+    flex-grow: 1;
+    height: 26px;
+    background-color: #f1f3f5;
+    border-radius: 6px;
+}
+
+.timeline-bar {
+    position: absolute;
+    top: 3px;
+    height: 20px;
+    border-radius: 6px;
+    min-width: 6px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
+}
+
+.timeline-bar.priority-high {
+    background-color: #dc3545;
+}
+
+.timeline-bar.priority-medium {
+    background-color: #fd7e14;
+}
+
+.timeline-bar.priority-low {
+    background-color: #0d6efd;
+}
+
+.timeline-today-marker {
+    position: absolute;
+    top: -28px;
+    bottom: 0;
+    width: 2px;
+    background-color: #212529;
+    z-index: 2;
+}
+
+.timeline-today-marker::after {
+    content: "Today";
+    position: absolute;
+    top: 0;
+    left: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: #212529;
+    white-space: nowrap;
+}
+
+/* ==========================================
+   STATUS GRAPH
+   ========================================== */
+
+.status-chart-container {
+    position: relative;
+    height: 280px;
+}

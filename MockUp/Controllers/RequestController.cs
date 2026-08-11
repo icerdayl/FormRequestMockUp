@@ -30,6 +30,7 @@ namespace RequestForm.Controllers
 
             return View(new Request
             {
+                StartDate = DateTime.Today,
                 PreferredCompletionDate = DateTime.Today
             });
         }

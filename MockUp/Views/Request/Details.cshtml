@@ -75,7 +75,19 @@
 
             </div>
 
-            <div class="row">
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">Start Date</label>
+
+                    <p>
+                        @(Model.StartDate.HasValue
+                            ? Model.StartDate.Value.ToString("MMMM dd, yyyy")
+                            : "Not set")
+                    </p>
+
+                </div>
 
                 <div class="col-md-6">
 
@@ -84,6 +96,10 @@
                     <p>@Model.PreferredCompletionDate.ToString("MMMM dd, yyyy")</p>
 
                 </div>
+
+            </div>
+
+            <div class="row">
 
                 <div class="col-md-6">
 
