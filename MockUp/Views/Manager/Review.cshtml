@@ -122,13 +122,13 @@
 
                 <div class="card-header">
 
-                    <h5>Supervisor Decision</h5>
+                    <h5>Help Desk Decision</h5>
 
                 </div>
 
                 <div class="card-body">
 
-                    <form asp-controller="Supervisor"
+                    <form asp-controller="HelpDesk"
                           asp-action="UpdateStatus"
                           method="post">
 
@@ -150,21 +150,23 @@
 
                         </div>
 
-
-                        <button type="submit"
-                                name="decision"
-                                value="Approved"
-                                class="btn btn-success">
+                        <button type="button"
+                                class="btn btn-success btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
+                                data-id="@Model.RequestId"
+                                data-action="Approved"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reviewApprovalModal">
 
                             Approve
 
                         </button>
 
-
-                        <button type="submit"
-                                name="decision"
-                                value="Rejected"
-                                class="btn btn-danger">
+                        <button type="button"
+                                class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
+                                data-id="@Model.RequestId"
+                                data-action="Rejected"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reviewApprovalModal">
 
                             Reject
 
@@ -181,3 +183,5 @@
     </div>
 
 </div>
+
+<partial name="_ReviewApprovalModal" model="@("HelpDesk")" />

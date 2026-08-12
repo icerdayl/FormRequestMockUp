@@ -15,6 +15,21 @@ body {
 
 /* SIDEBAR */
 
+:root {
+    --sidebar-width: 250px; /* Change this number to resize your sidebar */
+}
+
+/* Style for your global sidebar */
+.global-sidebar {
+    width: var(--sidebar-width);
+}
+
+    /* Style that automatically pushes the main content */
+    .global-sidebar ~ main,
+    .global-sidebar ~ .main-content {
+        margin-left: var(--sidebar-width);
+    }
+
 .sidebar {
     width: 260px;
     background: #1f2937;

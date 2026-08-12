@@ -1,0 +1,75 @@
+﻿@model string
+@{
+    // Pass the target controller's name in, e.g.:
+    // <partial name="_ReviewApprovalModal" model="@("Manager")" />
+    // <partial name="_ReviewApprovalModal" model="@("Supervisor")" />
+    // <partial name="_ReviewApprovalModal" model="@("HelpDesk")" />
+    var controllerName = Model;
+}
+
+<div class="modal fade"
+     id="reviewApprovalModal"
+     tabindex="-1"
+     aria-labelledby="reviewApprovalModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <form asp-controller="@controllerName"
+                  asp-action="UpdateStatus"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title" id="reviewApprovalModalLabel">
+                        Confirm Action
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <p id="reviewApprovalMessage">
+                        Are you sure you want to perform this action?
+                    </p>
+
+                    <input type="hidden"
+                           id="approvalRequestId"
+                           name="RequestId" />
+
+                    <input type="hidden"
+                           id="approvalDecision"
+                           name="decision" />
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            id="approvalConfirmButton"
+                            class="btn btn-primary">
+                        Confirm
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>

@@ -109,6 +109,26 @@
 
                 </div>
 
+                <div class="col-md-6">
+
+                    <label class="fw-bold">Supporting Document</label>
+
+                    <p>
+                        @if (!string.IsNullOrWhiteSpace(Model.AttachmentPath))
+                        {
+                            <a href="@Model.AttachmentPath" target="_blank">
+                                <i class="bi bi-paperclip"></i>
+                                @System.IO.Path.GetFileName(Model.AttachmentPath)
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No file attached</span>
+                        }
+                    </p>
+
+                </div>
+
             </div>
 
         </div>

@@ -18,25 +18,57 @@
 
 document.addEventListener("DOMContentLoaded", function () {
 
+    // Wires up every "Approve" / "Reject" button (class="approval-btn")
+    // on any page that includes the shared _ApprovalModal partial.
+    // Each button needs data-id="<RequestId>" and
+    // data-action="Approved" or "Rejected".
+
     const buttons = document.querySelectorAll(".approval-btn");
 
-    buttons.forEach(btn => {
+    const requestIdInput = document.getElementById("approvalRequestId");
+    const decisionInput = document.getElementById("approvalDecision");
+    const message = document.getElementById("approvalMessage");
+    const confirmButton = document.getElementById("approvalConfirmButton");
 
-        btn.addEventListener("click", function () {
+    if (!requestIdInput || !decisionInput) {
+        return;
+    }
 
-            document.getElementById("RequestId").value =
-                this.dataset.id;
+    buttons.forEach(function (button) {
 
-            document.getElementById("status").value =
-                this.dataset.action;
+        button.addEventListener("click", function () {
 
-            document.getElementById("Remarks").value =
-                document.querySelector("textarea[name='Remarks']").value;
+            const requestId = this.dataset.id;
+            const decision = this.dataset.action;
 
-            document.getElementById("approvalMessage").innerText =
-                "Are you sure you want to " +
-                this.dataset.action.toLowerCase() +
-                " this request?";
+            requestIdInput.value = requestId;
+            decisionInput.value = decision;
+
+            if (message) {
+
+                message.textContent =
+                    "Are you sure you want to " +
+                    decision.toLowerCase() +
+                    " this request?";
+
+            }
+
+            if (confirmButton) {
+
+                if (decision === "Approved") {
+
+                    confirmButton.textContent = "Approve";
+                    confirmButton.className = "btn btn-success";
+
+                } else {
+
+                    confirmButton.textContent = "Reject";
+                    confirmButton.className = "btn btn-danger";
+
+                }
+
+            }
+
         });
 
     });

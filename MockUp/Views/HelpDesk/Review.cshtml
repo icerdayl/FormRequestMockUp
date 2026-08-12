@@ -1,10 +1,7 @@
-﻿@model RequestForm.Models.Request
+@model RequestForm.Models.Request
 
 @{
     ViewData["Title"] = "Review Request";
-}
-@section Styles {
-    <link rel="stylesheet" href="~/css/request-details.css" />
 }
 
 <div class="container-fluid">
@@ -30,7 +27,9 @@
 
                 <div class="col-md-6">
 
-                    <label class="fw-bold">Request Title</label>
+                    <label class="fw-bold">
+                        Request Title
+                    </label>
 
                     <p>@Model.Title</p>
 
@@ -38,19 +37,26 @@
 
                 <div class="col-md-6">
 
-                    <label class="fw-bold">Request Type</label>
+                    <label class="fw-bold">
+                        Request Type
+                    </label>
 
-                    <p>@Model.RequestType?.RequestTypeName</p>
+                    <p>
+                        @Model.RequestType?.RequestTypeName
+                    </p>
 
                 </div>
 
             </div>
 
+
             <div class="row mb-4">
 
                 <div class="col-md-6">
 
-                    <label class="fw-bold">Department</label>
+                    <label class="fw-bold">
+                        Department
+                    </label>
 
                     <p>@Model.Department</p>
 
@@ -58,7 +64,9 @@
 
                 <div class="col-md-6">
 
-                    <label class="fw-bold">Priority</label>
+                    <label class="fw-bold">
+                        Priority
+                    </label>
 
                     <p>@Model.Priority</p>
 
@@ -66,159 +74,114 @@
 
             </div>
 
+
             <div class="mb-4">
 
-                <label class="fw-bold">Description</label>
+                <label class="fw-bold">
+                    Description
+                </label>
 
                 <p>@Model.Description</p>
 
             </div>
 
-            <div class="row">
+
+            <div class="row mb-4">
 
                 <div class="col-md-6">
 
-                    <label class="fw-bold">Preferred Completion Date</label>
+                    <label class="fw-bold">
+                        Preferred Completion Date
+                    </label>
 
-                    <p>@Model.PreferredCompletionDate.ToString("MMMM dd, yyyy")</p>
+                    <p>
+                        @Model.PreferredCompletionDate.ToString("MMMM dd, yyyy")
+                    </p>
 
                 </div>
 
                 <div class="col-md-6">
 
-                    <label class="fw-bold">Status</label>
+                    <label class="fw-bold">
+                        Status
+                    </label>
 
-                    <p>@Model.Status?.StatusName</p>
-                                        
-                </div>
-
-                <div>
-
-                    @if (ViewBag.Approval != null)
-                    {
-                        <hr />
-                        <p>
-                            <strong>Remarks:</strong><br />
-                            @ViewBag.Approval.Remarks
-                        </p>
-
-                    }
+                    <p>
+                        @Model.Status?.StatusName
+                    </p>
 
                 </div>
-
-               
 
             </div>
+
+
             <hr />
 
-            @{
-                var approval = ViewBag.Approval as RequestForm.Models.RequestApproval;
-            }
 
-            @if (approval == null)
-            {
-                <div class="card mt-4">
+            <div class="card mt-4">
 
-                    <div class="card-header">
-                        <h5>Help Desk Decision</h5>
-                    </div>
+                <div class="card-header">
 
-                    <div class="card-body">
-
-                        <label class="form-label">
-                            Remarks
-                        </label>
-
-                        <textarea class="form-control"
-                                  rows="4"
-                                  name="Remarks"></textarea>
-
-                        <br />
-
-                        <button type="button"
-                                class="btn btn-success approval-btn"
-                                data-id="@Model.RequestId"
-                                data-action="Approved"
-                                data-bs-toggle="modal"
-                                data-bs-target="#approvalModal">
-
-                            Approve
-
-                        </button>
-
-                        <button type="button"
-                                class="btn btn-danger approval-btn"
-                                data-id="@Model.RequestId"
-                                data-action="Rejected"
-                                data-bs-toggle="modal"
-                                data-bs-target="#approvalModal">
-
-                            Reject
-
-                        </button>
-
-                    </div>
+                    <h5>Help Desk Decision</h5>
 
                 </div>
-            }
-            else
-            {
-                <div class="card mt-4">
 
-                    <div class="card-header">
-                        <h5>Help Desk Decision</h5>
-                    </div>
+                <div class="card-body">
 
-                    <div class="card-body">
+                    <form asp-controller="HelpDesk"
+                          asp-action="UpdateStatus"
+                          method="post">
 
-                        <p>
-                            <strong>Decision:</strong>
-                            @approval.Decision
-                        </p>
+                        @Html.AntiForgeryToken()
 
-                        <p>
-                            <strong>Remarks:</strong><br />
-                            @approval.Remarks
-                        </p>
+                        <input type="hidden"
+                               name="RequestId"
+                               value="@Model.RequestId" />
 
-                        <hr />
+                        <div class="mb-3">
 
-                        @if (approval.Decision == "Approved")
-                        {
+                            <label class="form-label">
+                                Remarks
+                            </label>
+
+                            <textarea class="form-control"
+                                      name="remarks"
+                                      rows="4"></textarea>
+
+                        </div>
+                       
                             <button type="button"
-                                    class="btn btn-danger approval-btn"
-                                    data-id="@Model.RequestId"
-                                    data-action="Rejected"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#approvalModal">
-
-                                Change to Rejected
-
-                            </button>
-                        }
-                        else
-                        {
-                            <button type="button"
-                                    class="btn btn-success approval-btn"
+                                    class="btn btn-success btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
                                     data-id="@Model.RequestId"
                                     data-action="Approved"
                                     data-bs-toggle="modal"
-                                    data-bs-target="#approvalModal">
+                                    data-bs-target="#reviewApprovalModal">
 
-                                Change to Approved
+                                Approve
 
                             </button>
-                        }
 
-                    </div>
+                            <button type="button"
+                                    class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
+                                    data-id="@Model.RequestId"
+                                    data-action="Rejected"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#reviewApprovalModal">
+
+                                Reject
+
+                            </button>
+                                                
+                    </form>
 
                 </div>
-            }
+
+            </div>
+
         </div>
 
     </div>
-    
 
 </div>
 
-<partial name="_ApprovalModal" />
+<partial name="_ReviewApprovalModal" model="@("HelpDesk")" />

@@ -60,6 +60,7 @@ namespace RequestForm.Services
             existing.Priority = request.Priority;
             existing.StartDate = request.StartDate;
             existing.PreferredCompletionDate = request.PreferredCompletionDate;
+            existing.AttachmentPath = request.AttachmentPath;
 
             await _context.SaveChangesAsync();
         }

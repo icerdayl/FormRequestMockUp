@@ -70,9 +70,6 @@ namespace RequestForm.Controllers
             if (request == null)
                 return NotFound();
 
-            ViewBag.Approval =
-                await _helpDeskService.GetLatestApproval(id);
-
             return View(request);
         }
 
@@ -81,14 +78,14 @@ namespace RequestForm.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStatus(
             int RequestId,
-            string status,
-            string Remarks)
+            string decision,
+            string remarks)
         {
             var success =
                 await _helpDeskService.UpdateStatus(
                     RequestId,
-                    status,
-                    Remarks);
+                    decision,
+                    remarks);
 
             if (!success)
                 return NotFound();

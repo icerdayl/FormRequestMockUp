@@ -11,13 +11,80 @@ namespace RequestForm.Controllers
     {
         private readonly IRequestService _requestService;
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _env;
+
+        private static readonly string[] AllowedAttachmentExtensions =
+        {
+            ".pdf", ".doc", ".docx", ".xls", ".xlsx", ".png", ".jpg", ".jpeg"
+        };
+
+        private const long MaxAttachmentSizeBytes = 10 * 1024 * 1024; // 10 MB
 
         public RequestController(
             IRequestService requestService,
-            ApplicationDbContext context)
+            ApplicationDbContext context,
+            IWebHostEnvironment env)
         {
             _requestService = requestService;
             _context = context;
+            _env = env;
+        }
+
+        // ===========================
+        // ATTACHMENT HELPERS
+        // ===========================
+
+        private (bool IsValid, string? Error) ValidateAttachment(IFormFile file)
+        {
+            var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+            if (!AllowedAttachmentExtensions.Contains(extension))
+            {
+                return (false,
+                    "Unsupported file type. Allowed types: PDF, Word, Excel, PNG, JPG.");
+            }
+
+            if (file.Length > MaxAttachmentSizeBytes)
+            {
+                return (false, "File is too large. Maximum size is 10 MB.");
+            }
+
+            return (true, null);
+        }
+
+        private async Task<string> SaveAttachmentAsync(IFormFile file)
+        {
+            var uploadsFolder =
+                Path.Combine(_env.WebRootPath, "uploads", "requests");
+
+            Directory.CreateDirectory(uploadsFolder);
+
+            var uniqueFileName =
+                $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            return $"/uploads/requests/{uniqueFileName}";
+        }
+
+        private void DeletePhysicalAttachment(string? relativePath)
+        {
+            if (string.IsNullOrWhiteSpace(relativePath))
+                return;
+
+            var fullPath = Path.Combine(
+                _env.WebRootPath,
+                relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
+
+            if (System.IO.File.Exists(fullPath))
+            {
+                System.IO.File.Delete(fullPath);
+            }
         }
 
         // ===========================
@@ -41,13 +108,28 @@ namespace RequestForm.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Request request)
+        public async Task<IActionResult> Create(Request request, IFormFile? Attachment)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
 
                 return View(request);
+            }
+
+            if (Attachment != null && Attachment.Length > 0)
+            {
+                var (isValid, error) = ValidateAttachment(Attachment);
+
+                if (!isValid)
+                {
+                    ModelState.AddModelError("Attachment", error!);
+                    ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
+
+                    return View(request);
+                }
+
+                request.AttachmentPath = await SaveAttachmentAsync(Attachment);
             }
 
             await _requestService.Create(request);
@@ -109,6 +191,13 @@ namespace RequestForm.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            var request = await _requestService.GetById(id);
+
+            if (request != null)
+            {
+                DeletePhysicalAttachment(request.AttachmentPath);
+            }
+
             await _requestService.Delete(id);
 
             return RedirectToAction(nameof(MyRequests));
@@ -144,12 +233,37 @@ namespace RequestForm.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Request request)
+        public async Task<IActionResult> Edit(Request request, IFormFile? Attachment)
         {
             if (!ModelState.IsValid)
             {
                 ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
                 return View(request);
+            }
+
+            var existing = await _requestService.GetById(request.RequestId);
+
+            if (Attachment != null && Attachment.Length > 0)
+            {
+                var (isValid, error) = ValidateAttachment(Attachment);
+
+                if (!isValid)
+                {
+                    ModelState.AddModelError("Attachment", error!);
+                    ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
+
+                    return View(request);
+                }
+
+                DeletePhysicalAttachment(existing?.AttachmentPath);
+
+                request.AttachmentPath = await SaveAttachmentAsync(Attachment);
+            }
+            else
+            {
+                // No new file selected — keep whatever attachment
+                // (if any) already exists on the record.
+                request.AttachmentPath = existing?.AttachmentPath;
             }
 
             await _requestService.Update(request);

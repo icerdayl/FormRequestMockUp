@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace ChangeRequest.Controllers
+namespace RequestForm.Controllers
 {
     public class AdminController : Controller
     {

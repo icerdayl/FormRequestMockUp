@@ -242,6 +242,14 @@
                                    class="form-control"
                                    accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
 
+                            <small class="text-muted d-block mt-1">
+                                PDF, Word, Excel, PNG, or JPG. Max 10 MB.
+                            </small>
+
+                            <span class="text-danger d-block">
+                                @Html.ValidationMessage("Attachment")
+                            </span>
+
                         </div>
 
                     </div>

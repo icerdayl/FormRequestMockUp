@@ -1,4 +1,4 @@
-namespace ChangeRequest.Models
+namespace RequestForm.Models
 {
     public class ErrorViewModel
     {

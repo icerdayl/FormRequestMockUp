@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/css/dashboard.css" />
 }
 
-<div class="container-fluid>
+<div class="container-fluid">
 
     <div class="mb-4">
 
@@ -105,10 +105,10 @@
         </div>
 
     </div>
-
-    <!-- ========================================== -->
-    <!-- 1. HIGH PRIORITY REQUESTS                   -->
-    <!-- ========================================== -->
+    
+    @* ==============================
+    HIGH PRIORITY REQUESTS
+    ============================== *@
 
     <div class="card shadow mt-4">
 
@@ -164,7 +164,9 @@
                                             var badge = item.Status?.StatusName switch
                                             {
                                                 "Pending" => "bg-warning text-dark",
-                                                "Approved" => "bg-success",
+                                                "Approved by Help Desk" => "border border-2 border-primary text-black bg-primary-subtle",
+                                                "Approved by Supervisor" => "border border-2 border-success text-black bg-success-subtle",
+                                                "Approved by Manager" => "bg-success",
                                                 "Rejected" => "bg-danger",
                                                 "In Progress" => "bg-primary",
                                                 "Completed" => "bg-secondary",
@@ -213,9 +215,9 @@
 
     </div>
 
-    <!-- ========================================== -->
-    <!-- 2. DEADLINE WATCH                           -->
-    <!-- ========================================== -->
+    @*==============================
+    DEADLINE WATCH
+    ============================== *@
 
     <div class="card shadow mt-4">
 
@@ -238,6 +240,7 @@
                             <th>Reference No.</th>
                             <th>Title</th>
                             <th>Status</th>
+                            <th>Start Date</th>
                             <th>Due Date</th>
                             <th>Deadline</th>
 
@@ -281,10 +284,27 @@
                                     <td>@item.Title</td>
 
                                     <td>
-                                        <span class="badge bg-secondary">
+                                        @{
+                                            var badge = item.Status?.StatusName switch
+                                            {
+                                                "Pending" => "bg-warning text-dark",
+                                                "Approved by Help Desk" => "border border-2 border-primary text-black bg-primary-subtle",
+                                                "Approved by Supervisor" => "border border-2 border-success text-black bg-success-subtle",
+                                                "Approved by Manager" => "bg-success",
+                                                "Rejected" => "bg-danger",
+                                                "In Progress" => "bg-primary",
+                                                "Completed" => "bg-secondary",
+                                                _ => "bg-dark"
+                                            };
+                                        }
+
+                                        <span class="badge @badge">
                                             @item.Status?.StatusName
                                         </span>
                                     </td>
+
+                                    <td>
+                                        @item.StartDate?.ToString("MMM dd, yyyy")
 
                                     <td>
                                         @item.PreferredCompletionDate.ToString("MMM dd, yyyy")
@@ -322,9 +342,9 @@
 
     </div>
 
-    <!-- ========================================== -->
-    <!-- 3. RECENT REQUESTS                          -->
-    <!-- ========================================== -->
+    @*==============================
+    RECENT REQUESTS
+    ============================== *@
 
     <div class="card shadow mt-4">
 
@@ -375,12 +395,13 @@
                                     <td>@item.RequestType?.RequestTypeName</td>
 
                                     <td>
-
                                         @{
                                             var badge = item.Status?.StatusName switch
                                             {
                                                 "Pending" => "bg-warning text-dark",
-                                                "Approved" => "bg-success",
+                                                "Approved by Help Desk" => "border border-2 border-primary text-black bg-primary-subtle",
+                                                "Approved by Supervisor" => "border border-2 border-success text-black bg-success-subtle",
+                                                "Approved by Manager" => "bg-success",
                                                 "Rejected" => "bg-danger",
                                                 "In Progress" => "bg-primary",
                                                 "Completed" => "bg-secondary",
@@ -389,11 +410,8 @@
                                         }
 
                                         <span class="badge @badge">
-
                                             @item.Status?.StatusName
-
                                         </span>
-
                                     </td>
 
                                     <td>
@@ -428,9 +446,9 @@
 
     </div>
 
-    <!-- ========================================== -->
-    <!-- 4. TASK TIMELINE                            -->
-    <!-- ========================================== -->
+    @*==============================
+    TIMELINE VIEW
+    ============================== *@
 
     <div class="card shadow mt-4">
 
@@ -460,8 +478,8 @@
                 <div class="timeline-wrapper">
 
                     <div class="timeline-scale">
-                        <span style="left: 0%">@windowStart.ToString("MMM dd")</span>
-                        <span style="left: 100%">@windowEnd.ToString("MMM dd")</span>
+                        <span style="left: 20%">@windowStart.ToString("MMM dd")</span>
+                        <span style="left: 99%">@windowEnd.ToString("MMM dd")</span>
                     </div>
 
                     @foreach (var item in Model.TimelineTasks)
@@ -529,9 +547,9 @@
 
     </div>
 
-    <!-- ========================================== -->
-    <!-- 5. STATUS GRAPH                             -->
-    <!-- ========================================== -->
+    @* ==============================
+    STATUS CHART
+    ============================== *@
 
     <div class="card shadow mt-4 mb-4">
 
@@ -569,13 +587,13 @@
             new Chart(statusCtx, {
                 type: "bar",
                 data: {
-                    labels: statusLabels,
+                    labels: statusLabels,   
                     datasets: [{
                         label: "Requests",
                         data: statusData,
                         backgroundColor: [
-                            "#6c757d", "#0d6efd", "#198754",
-                            "#20c997", "#dc3545", "#fd7e14", "#343a40"
+                            "#198754", "#0d6efd", "#6c757d",
+                            "#ffc107", "#dc3545", "#fd7e14", "#343a40"
                         ]
                     }]
                 },

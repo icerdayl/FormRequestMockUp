@@ -35,8 +35,6 @@ namespace RequestForm.Models
 
         public string? AttachmentPath { get; set; }
 
-        //public string? HelpDeskRemarks { get; set; }
-
         public int StatusId { get; set; }
 
         public DateTime DateSubmitted { get; set; }

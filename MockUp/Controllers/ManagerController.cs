@@ -35,20 +35,12 @@ namespace RequestForm.Controllers
         }
 
         [HttpPost]
-        [Route("Manager/UpdateStatus")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateStatus(
             int RequestId,
             string decision,
             string remarks)
         {
-            Console.WriteLine("=================================");
-            Console.WriteLine("MANAGER UPDATE STATUS CALLED");
-            Console.WriteLine($"RequestId: {RequestId}");
-            Console.WriteLine($"Decision: {decision}");
-            Console.WriteLine($"Remarks: {remarks}");
-            Console.WriteLine("=================================");
-
             var request =
                 await _managerService.ProcessApproval(
                     RequestId,
@@ -57,11 +49,8 @@ namespace RequestForm.Controllers
 
             if (request == null)
             {
-                Console.WriteLine("ManagerService returned NULL.");
                 return NotFound();
             }
-
-            Console.WriteLine("Manager approval successful.");
 
             return RedirectToAction(nameof(Index));
         }

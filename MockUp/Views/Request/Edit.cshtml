@@ -236,9 +236,30 @@
 
                             <p>Drag & Drop Files Here</p>
 
+                            @if (!string.IsNullOrWhiteSpace(Model.AttachmentPath))
+                            {
+                                <p class="mb-2">
+                                    Current file:
+                                    <a href="@Model.AttachmentPath" target="_blank">
+                                        @System.IO.Path.GetFileName(Model.AttachmentPath)
+                                    </a>
+                                </p>
+                            }
+
                             <input type="file"
-                                   multiple
-                                   class="form-control">
+                                   id="Attachment"
+                                   name="Attachment"
+                                   class="form-control"
+                                   accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg">
+
+                            <small class="text-muted d-block mt-1">
+                                PDF, Word, Excel, PNG, or JPG. Max 10 MB.
+                                Leave blank to keep the current file.
+                            </small>
+
+                            <span class="text-danger d-block">
+                                @Html.ValidationMessage("Attachment")
+                            </span>
 
                         </div>
 

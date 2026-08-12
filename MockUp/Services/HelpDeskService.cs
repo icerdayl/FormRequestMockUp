@@ -145,7 +145,8 @@ namespace RequestForm.Services
 
             var approval = await _context.RequestApprovals
                 .FirstOrDefaultAsync(a =>
-                    a.RequestId == requestId);
+                    a.RequestId == requestId &&
+                    a.ApprovedBy == "Help Desk");
 
             if (approval == null)
             {

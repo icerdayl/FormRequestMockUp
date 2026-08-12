@@ -1,73 +1,89 @@
-﻿<div class="modal fade"
+@model string
+@{
+    // Pass the target controller's name in, e.g.:
+    // <partial name="_ApprovalModal" model="@("Manager")" />
+    // <partial name="_ApprovalModal" model="@("Supervisor")" />
+    // <partial name="_ApprovalModal" model="@("HelpDesk")" />
+    var controllerName = Model;
+}
+
+<div class="modal fade"
      id="approvalModal"
      tabindex="-1"
+     aria-labelledby="approvalModalLabel"
      aria-hidden="true">
 
     <div class="modal-dialog">
-
         <div class="modal-content">
 
-            <div class="modal-header">
+            <form asp-controller="@controllerName"
+                  asp-action="UpdateStatus"
+                  method="post">
 
-                <h5 class="modal-title">
-                    Confirm Action
-                </h5>
+                @Html.AntiForgeryToken()
 
-                <button type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal">
-                </button>
+                <div class="modal-header">
 
-            </div>
+                    <h5 class="modal-title" id="approvalModalLabel">
+                        Confirm Action
+                    </h5>
 
-            <div class="modal-body">
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
 
-                <p id="approvalMessage">Do you confirm this action?</p>
+                </div>
 
-            </div>
+                <div class="modal-body">
 
-            <div class="modal-footer">
+                    <p id="approvalMessage">
+                        Are you sure you want to perform this action?
+                    </p>
 
-                <button type="button"
-                        class="btn btn-secondary"
-                        data-bs-dismiss="modal">
+                    <div class="mb-3">
 
-                    Cancel
+                        <label class="form-label">
+                            Remarks
+                        </label>
 
-                </button>
+                        <textarea id="approvalRemarks"
+                                  name="remarks"
+                                  class="form-control"
+                                  rows="4"
+                                  placeholder="Enter remarks..."></textarea>
 
-                <form id="approvalForm"
-                      asp-action="UpdateStatus"
-                      asp-controller="HelpDesk"
-                      method="post">
-
-                    @Html.AntiForgeryToken()
+                    </div>
 
                     <input type="hidden"
-                           id="RequestId"
+                           id="approvalRequestId"
                            name="RequestId" />
 
                     <input type="hidden"
-                           id="status"
-                           name="status" />
+                           id="approvalDecision"
+                           name="decision" />
 
-                    <input type="hidden"
-                           id="Remarks"
-                           name="Remarks" />
+                </div>
 
-                    <button type="submit"
-                            class="btn btn-primary">
+                <div class="modal-footer">
 
-                        Confirm
-
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
                     </button>
 
-                </form>
+                    <button type="submit"
+                            id="approvalConfirmButton"
+                            class="btn btn-primary">
+                        Confirm
+                    </button>
 
-            </div>
+                </div>
+
+            </form>
 
         </div>
-
     </div>
 
 </div>

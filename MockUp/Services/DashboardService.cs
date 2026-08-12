@@ -22,19 +22,22 @@ namespace RequestForm.Services
                 await _context.Requests.CountAsync();
 
             dashboard.PendingRequests =
-                await _context.Requests.CountAsync(x => x.StatusId == 1);
+                await _context.Requests.CountAsync(x => x.Status!.StatusName == "Pending");
 
             dashboard.ApprovedRequests =
-                await _context.Requests.CountAsync(x => x.StatusId == 2);
+                await _context.Requests.CountAsync(x =>
+                    x.Status!.StatusName == "Approved by Help Desk" ||
+                    x.Status!.StatusName == "Approved by Supervisor" ||
+                    x.Status!.StatusName == "Approved by Manager");
 
             dashboard.RejectedRequests =
-                await _context.Requests.CountAsync(x => x.StatusId == 3);
+                await _context.Requests.CountAsync(x => x.Status!.StatusName == "Rejected");
 
             dashboard.InProgressRequests =
-                await _context.Requests.CountAsync(x => x.StatusId == 4);
+                await _context.Requests.CountAsync(x => x.Status!.StatusName == "In Progress");
 
             dashboard.CompletedRequests =
-                await _context.Requests.CountAsync(x => x.StatusId == 5);
+                await _context.Requests.CountAsync(x => x.Status!.StatusName == "Completed");
 
             dashboard.RecentRequests =
                 await _context.Requests

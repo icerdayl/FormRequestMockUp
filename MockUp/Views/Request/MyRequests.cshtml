@@ -107,18 +107,19 @@
                                         var badge = item.Status?.StatusName switch
                                         {
                                             "Pending" => "bg-warning text-dark",
-                                            "Approved" => "bg-success",
+                                            "Approved by Help Desk" => "border border-2 border-primary text-black bg-primary-subtle",
+                                            "Approved by Supervisor" => "border border-2 border-success text-black bg-success-subtle",
+                                            "Approved by Manager" => "bg-success",
                                             "Rejected" => "bg-danger",
-                                            "In Progress" => "bg-info",
-                                            "Completed" => "bg-primary",
-                                            _ => "bg-secondary"
+                                            "In Progress" => "bg-primary",
+                                            "Completed" => "bg-secondary",
+                                            _ => "bg-dark"
                                         };
                                     }
 
                                     <span class="badge @badge">
                                         @item.Status?.StatusName
                                     </span>
-
                                 </td>
 
                                 <td>

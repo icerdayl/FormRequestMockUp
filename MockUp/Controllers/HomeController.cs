@@ -1,8 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
-using ChangeRequest.Models;
+using RequestForm.Models;
 using System.Diagnostics;
 
-namespace ChangeRequest.Controllers
+namespace RequestForm.Controllers
 {
     public class HomeController : Controller
     {

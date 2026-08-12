@@ -179,7 +179,19 @@ form.addEventListener("submit", function (e) {
 
     }
 
-    if (countWords(description.value) === 0) {
+    else if (countWords(description.value) === 0) {
+
+        descriptionError.textContent =
+            "Fill out the description";
+
+        valid = false;
+
+    }
+
+    else if (countWords(description.value) < 9) {
+
+        descriptionError.textContent =
+            "The description must be at least 9 words long.";
 
         valid = false;
 
