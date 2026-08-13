@@ -1,0 +1,117 @@
+﻿@model IEnumerable<RequestForm.Models.Request>
+
+<table class="table table-hover align-middle">
+
+    <thead>
+        <tr>
+            <th>Ref. #</th>
+            <th>Title</th>
+            <th>Request Type</th>
+            <th>Date Submitted</th>
+            <th>Status</th>
+            <th width="220">Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @if (Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+
+                    <td>
+                        @item.ReferenceNumber
+                    </td>
+
+                    <td>
+                        @item.Title
+                    </td>
+
+                    <td>
+                        @item.RequestType?.RequestTypeName
+                    </td>
+
+                    <td>
+                        @item.DateSubmitted.ToString("MMM dd, yyyy")
+                    </td>
+
+                    <td>
+
+                        @{
+                            var badge = item.Status?.StatusName switch
+                            {
+                                "Pending" => "bg-warning text-dark",
+                                "Approved by Help Desk" => "border border-2 border-primary text-black bg-primary-subtle",
+                                "Approved by Supervisor" => "border border-2 border-success text-black bg-success-subtle",
+                                "Approved by Manager" => "bg-success",
+                                "Rejected" => "bg-danger",
+                                "In Progress" => "bg-primary",
+                                "Completed" => "bg-secondary",
+                                _ => "bg-dark"
+                            };
+                        }
+
+                        <span class="badge @badge">
+                            @item.Status?.StatusName
+                        </span>
+
+                    </td>
+
+                    <td>
+
+                        <a asp-controller="HelpDesk"
+                           asp-action="Review"
+                           asp-route-id="@item.RequestId"
+                           class="btn btn-info btn-sm">
+
+                            View
+
+                        </a>
+
+                        @if (item.Status?.StatusName == "Pending")
+                        {
+                            <button type="button"
+                                    class="btn btn-success btn-sm approval-btn"
+                                    data-id="@item.RequestId"
+                                    data-action="Approved"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#approvalModal">
+
+                                Approve
+
+                            </button>
+
+                            <button type="button"
+                                    class="btn btn-danger btn-sm approval-btn"
+                                    data-id="@item.RequestId"
+                                    data-action="Rejected"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#approvalModal">
+
+                                Reject
+
+                            </button>
+                        }
+
+                    </td>
+
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="6"
+                    class="text-center text-muted py-4">
+
+                    No requests found.
+
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>

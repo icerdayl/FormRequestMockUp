@@ -4,8 +4,6 @@ namespace RequestForm.Interfaces
 {
     public interface IRequestService
     {
-        Task<List<Request>> GetAll();
-
         Task<Request?> GetById(int id);
 
         Task<List<RequestType>> GetRequestTypes();

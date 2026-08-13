@@ -70,16 +70,9 @@ namespace RequestForm.Services
             if (request == null)
                 return null;
 
-
-            // Only Supervisor-approved requests
-            // can reach the Manager
-            // (StatusId 3 = "Approved by Supervisor" — compare
-            // by StatusId directly since Status is not Included here)
             if (request.StatusId != 3)
                 return null;
 
-
-            // Create approval history record
             var approval = new RequestApproval
             {
                 RequestId = requestId,

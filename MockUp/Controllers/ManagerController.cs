@@ -1,18 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RequestForm.Data;
 using RequestForm.Interfaces;
+using RequestForm.Services;
 
 namespace RequestForm.Controllers
 {
     public class ManagerController : Controller
     {
         private readonly IManagerService _managerService;
+        private readonly ApplicationDbContext _context;
 
         public ManagerController(
-            IManagerService managerService)
+            IManagerService managerService,
+            ApplicationDbContext context)
         {
             _managerService = managerService;
+            _context = context;
         }
 
+        // APPROVAL LIST
         public async Task<IActionResult> Index(string? search)
         {
             var requests =
@@ -23,6 +29,7 @@ namespace RequestForm.Controllers
             return View(requests);
         }
 
+        // REVIEW REQUEST
         public async Task<IActionResult> Review(int id)
         {
             var request =
@@ -30,6 +37,8 @@ namespace RequestForm.Controllers
 
             if (request == null)
                 return NotFound();
+
+            ViewBag.Remarks = await _context.GetApprovalRemarksAsync(id);
 
             return View(request);
         }

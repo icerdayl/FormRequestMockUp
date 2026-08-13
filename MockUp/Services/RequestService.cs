@@ -14,15 +14,6 @@ namespace RequestForm.Services
             _context = context;
         }
 
-        public async Task<List<Request>> GetAll()
-        {
-            return await _context.Requests
-                .Include(r => r.RequestType)
-                .Include(r => r.Status)
-                .OrderByDescending(r => r.DateSubmitted)
-                .ToListAsync();
-        }
-
         public async Task<Request?> GetById(int id)
         {
             return await _context.Requests

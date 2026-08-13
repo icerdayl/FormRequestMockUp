@@ -24,7 +24,7 @@
 
         <div class="card-body">
 
-            <form method="get" class="row mb-3">
+            <form method="get" class="row mb-3" id="filterForm">
 
                 <div class="col-md-4">
 
@@ -80,6 +80,7 @@
                         <th>Request Type</th>
                         <th>Date Submitted</th>
                         <th>Status</th>
+                        <th>Attachment</th>
                         <th width="220">Action</th>
 
                     </tr>
@@ -122,6 +123,23 @@
                                     </span>
                                 </td>
 
+                                <td class="justify-content-center">
+                                    @if (!string.IsNullOrWhiteSpace(item.AttachmentPath))   
+                                    {
+                                        <a href="@item.AttachmentPath"
+                                           target="_blank"
+                                           title="@System.IO.Path.GetFileName(item.AttachmentPath)">
+                                            <div class="card border-1 border-primary link-primary">
+                                                <i class="bi bi-paperclip">View File</i>
+                                            </div>
+                                        </a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">&mdash;</span>
+                                    }
+                                </td>
+
                                 <td>
 
                                     <a asp-action="Details"
@@ -156,7 +174,7 @@
                     else
                     {
                         <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
+                            <td colspan="7" class="text-center text-muted py-4">
                                 No requests found.
                             </td>
                         </tr>

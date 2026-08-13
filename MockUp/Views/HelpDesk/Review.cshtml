@@ -2,6 +2,8 @@
 
 @{
     ViewData["Title"] = "Review Request";
+
+    var canDecide = Model.Status?.StatusName == "Pending";
 }
 
 <div class="container-fluid">
@@ -115,6 +117,35 @@
             </div>
 
 
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">
+                        Supporting Document
+                    </label>
+
+                    <p>
+                        @if (!string.IsNullOrWhiteSpace(Model.AttachmentPath))
+                        {
+                            <a href="@Model.AttachmentPath" target="_blank">
+                                <i class="bi bi-paperclip"></i>
+                                @System.IO.Path.GetFileName(Model.AttachmentPath)
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No file attached</span>
+                        }
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <partial name="_ApprovalRemarks" model="@(ViewBag.Remarks as RequestForm.Models.ViewModels.ApprovalRemarksViewModel)" />
+
             <hr />
 
 
@@ -128,51 +159,40 @@
 
                 <div class="card-body">
 
-                    <form asp-controller="HelpDesk"
-                          asp-action="UpdateStatus"
-                          method="post">
+                    @if (canDecide)
+                    {
+                        <button type="button"
+                                class="btn btn-success btn-sm approval-btn"
+                                data-id="@Model.RequestId"
+                                data-action="Approved"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reviewApprovalModal">
 
-                        @Html.AntiForgeryToken()
+                            Approve
 
-                        <input type="hidden"
-                               name="RequestId"
-                               value="@Model.RequestId" />
+                        </button>
 
-                        <div class="mb-3">
+                        <button type="button"
+                                class="btn btn-danger btn-sm approval-btn"
+                                data-id="@Model.RequestId"
+                                data-action="Rejected"
+                                data-bs-toggle="modal"
+                                data-bs-target="#reviewApprovalModal">
 
-                            <label class="form-label">
-                                Remarks
-                            </label>
+                            Reject
 
-                            <textarea class="form-control"
-                                      name="remarks"
-                                      rows="4"></textarea>
+                        </button>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">
 
-                        </div>
-                       
-                            <button type="button"
-                                    class="btn btn-success btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
-                                    data-id="@Model.RequestId"
-                                    data-action="Approved"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#reviewApprovalModal">
+                            This request is no longer awaiting Help Desk action.
+                            Current status:
+                            <strong>@Model.Status?.StatusName</strong>
 
-                                Approve
-
-                            </button>
-
-                            <button type="button"
-                                    class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
-                                    data-id="@Model.RequestId"
-                                    data-action="Rejected"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#reviewApprovalModal">
-
-                                Reject
-
-                            </button>
-                                                
-                    </form>
+                        </p>
+                    }
 
                 </div>
 
@@ -184,4 +204,7 @@
 
 </div>
 
-<partial name="_ReviewApprovalModal" model="@("HelpDesk")" />
+@if (canDecide)
+{
+    <partial name="_ReviewApprovalModal" model="@("HelpDesk")" />
+}

@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using RequestForm.Data;
 using RequestForm.Interfaces;
 using RequestForm.Models;
+using RequestForm.Services;
 
 namespace RequestForm.Controllers
 {
@@ -139,31 +140,7 @@ namespace RequestForm.Controllers
 
         public async Task<IActionResult> MyRequests(string search, string status)
         {
-            var query = _context.Requests
-                .Include(r => r.Status)
-                .Include(r => r.RequestType)
-                .AsQueryable();
-
-            // Later, filter by logged-in user here
-            // query = query.Where(r => r.RequestedBy == currentUser);
-
-            if (!string.IsNullOrWhiteSpace(search))
-            {
-                query = query.Where(r =>
-                    r.Title.Contains(search) ||
-                    r.ReferenceNumber.Contains(search));
-            }
-
-            if (!string.IsNullOrWhiteSpace(status) &&
-                status != "All")
-            {
-                query = query.Where(r =>
-                    r.Status!.StatusName == status);
-            }
-
-            var requests = await query
-                .OrderByDescending(r => r.DateSubmitted)
-                .ToListAsync();
+            var requests = await _requestService.GetMyRequests(search, status);
 
             ViewBag.Search = search;
             ViewBag.Status = status;
@@ -212,6 +189,8 @@ namespace RequestForm.Controllers
 
             if (request == null)
                 return NotFound();
+
+            ViewBag.Remarks = await _context.GetApprovalRemarksAsync(id);
 
             return View(request);
         }

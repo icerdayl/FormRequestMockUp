@@ -26,8 +26,6 @@ namespace RequestForm.Services
 
             dashboard.ApprovedRequests =
                 await _context.Requests.CountAsync(x =>
-                    x.Status!.StatusName == "Approved by Help Desk" ||
-                    x.Status!.StatusName == "Approved by Supervisor" ||
                     x.Status!.StatusName == "Approved by Manager");
 
             dashboard.RejectedRequests =
@@ -52,7 +50,7 @@ namespace RequestForm.Services
                     .Include(x => x.Status)
                     .Include(x => x.RequestType)
                     .Where(x => x.Priority == "High" &&
-                         x.Status.StatusName != "Completed")
+                         x.Status!.StatusName != "Completed")
                     .OrderByDescending(x => x.DateSubmitted)
                     .ToListAsync();
 
@@ -87,14 +85,34 @@ namespace RequestForm.Services
 
 
             // ==========================================
-            // TIMELINE / GRAPH
+            // GANTT CHART (grouped by assigned developer)
             // ==========================================
 
-            dashboard.TimelineTasks = openRequests
-                .Where(x => x.StartDate.HasValue)
-                .OrderBy(x => x.StartDate)
-                .Take(15)
-                .ToList();
+            var scheduledRequests = await _context.Requests
+                .Include(x => x.Status)
+                .Include(x => x.RequestAssignments)
+                .Where(x =>
+                    x.StartDate.HasValue &&
+                    ( 
+                        x.Status!.StatusName == "Approved by Manager" ||
+                        x.Status!.StatusName == "In Progress" ||
+                        x.Status!.StatusName == "Completed"
+                    ))
+                .ToListAsync();
+
+            dashboard.GanttByDeveloper = scheduledRequests
+                .GroupBy(x =>
+                {
+                    var current = x.RequestAssignments
+                        .FirstOrDefault(a => a.IsCurrent);
+
+                    return current?.AssignedTo ?? "Unassigned";
+                })
+                .OrderBy(g => g.Key == "Unassigned" ? 1 : 0)
+                .ThenBy(g => g.Key)
+                .ToDictionary(
+                    g => g.Key,
+                    g => g.OrderBy(x => x.StartDate).ToList());
 
             dashboard.StatusBreakdown = await _context.Requests
                 .Include(x => x.Status)

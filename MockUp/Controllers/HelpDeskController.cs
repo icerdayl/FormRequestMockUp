@@ -1,17 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RequestForm.Data;
 using RequestForm.Interfaces;
 using RequestForm.Models.ViewModels;
+using RequestForm.Services;
 
 namespace RequestForm.Controllers
 {
     public class HelpDeskController : Controller
     {
         private readonly IHelpDeskService _helpDeskService;
+        private readonly ApplicationDbContext _context;
 
         public HelpDeskController(
-            IHelpDeskService helpDeskService)
+            IHelpDeskService helpDeskService,
+            ApplicationDbContext context)
         {
             _helpDeskService = helpDeskService;
+            _context = context;
         }
 
         // Request List
@@ -26,6 +31,13 @@ namespace RequestForm.Controllers
 
             ViewBag.Search = search;
             ViewBag.Status = status;
+
+            if (Request.Headers["X-Requested-With"] == "XMLHttpRequest")
+            {
+                return PartialView(
+                    "_RequestListTable",
+                    requests);
+            }
 
             return View(requests);
         }
@@ -69,6 +81,8 @@ namespace RequestForm.Controllers
 
             if (request == null)
                 return NotFound();
+
+            ViewBag.Remarks = await _context.GetApprovalRemarksAsync(id);
 
             return View(request);
         }

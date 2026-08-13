@@ -1,4 +1,6 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+﻿// SIDEBAR TOGGLE
+
+document.addEventListener("DOMContentLoaded", function () {
 
     const sidebar = document.querySelector(".sidebar");
 
@@ -16,12 +18,9 @@
 
 });
 
-document.addEventListener("DOMContentLoaded", function () {
+// APPROVAL MODAL
 
-    // Wires up every "Approve" / "Reject" button (class="approval-btn")
-    // on any page that includes the shared _ApprovalModal partial.
-    // Each button needs data-id="<RequestId>" and
-    // data-action="Approved" or "Rejected".
+document.addEventListener("DOMContentLoaded", function () {
 
     const buttons = document.querySelectorAll(".approval-btn");
 

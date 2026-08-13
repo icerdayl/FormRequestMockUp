@@ -1,7 +1,9 @@
-﻿@model RequestForm.Models.Request
+@model RequestForm.Models.Request
 
 @{
     ViewData["Title"] = "Review Request";
+
+    var canDecide = Model.Status?.StatusName == "Approved by Supervisor";
 }
 
 <div class="container-fluid">
@@ -115,6 +117,35 @@
             </div>
 
 
+            <div class="row mb-4">
+
+                <div class="col-md-6">
+
+                    <label class="fw-bold">
+                        Supporting Document
+                    </label>
+
+                    <p>
+                        @if (!string.IsNullOrWhiteSpace(Model.AttachmentPath))
+                        {
+                            <a href="@Model.AttachmentPath" target="_blank">
+                                <i class="bi bi-paperclip"></i>
+                                @System.IO.Path.GetFileName(Model.AttachmentPath)
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No file attached</span>
+                        }
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <partial name="_ApprovalRemarks" model="@(ViewBag.Remarks as RequestForm.Models.ViewModels.ApprovalRemarksViewModel)" />
+
             <hr />
 
 
@@ -122,36 +153,16 @@
 
                 <div class="card-header">
 
-                    <h5>Help Desk Decision</h5>
+                    <h5>Manager Decision</h5>
 
                 </div>
 
                 <div class="card-body">
 
-                    <form asp-controller="HelpDesk"
-                          asp-action="UpdateStatus"
-                          method="post">
-
-                        @Html.AntiForgeryToken()
-
-                        <input type="hidden"
-                               name="RequestId"
-                               value="@Model.RequestId" />
-
-                        <div class="mb-3">
-
-                            <label class="form-label">
-                                Remarks
-                            </label>
-
-                            <textarea class="form-control"
-                                      name="remarks"
-                                      rows="4"></textarea>
-
-                        </div>
-
+                    @if (canDecide)
+                    {
                         <button type="button"
-                                class="btn btn-success btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
+                                class="btn btn-success btn-sm approval-btn"
                                 data-id="@Model.RequestId"
                                 data-action="Approved"
                                 data-bs-toggle="modal"
@@ -162,7 +173,7 @@
                         </button>
 
                         <button type="button"
-                                class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
+                                class="btn btn-danger btn-sm approval-btn"
                                 data-id="@Model.RequestId"
                                 data-action="Rejected"
                                 data-bs-toggle="modal"
@@ -171,8 +182,17 @@
                             Reject
 
                         </button>
+                    }
+                    else
+                    {
+                        <p class="text-muted mb-0">
 
-                    </form>
+                            This is the final approval stage and a decision has
+                            already been made. Current status:
+                            <strong>@Model.Status?.StatusName</strong>
+
+                        </p>
+                    }
 
                 </div>
 
@@ -184,4 +204,7 @@
 
 </div>
 
-<partial name="_ReviewApprovalModal" model="@("HelpDesk")" />
+@if (canDecide)
+{
+    <partial name="_ReviewApprovalModal" model="@("Manager")" />
+}

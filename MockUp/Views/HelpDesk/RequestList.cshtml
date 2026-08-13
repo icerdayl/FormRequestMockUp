@@ -1,18 +1,19 @@
 ﻿@model IEnumerable<RequestForm.Models.Request>
 
 @{
-    ViewData["Title"] = "My Requests";
+    ViewData["Title"] = "Requests Lists";
 }
 
 @section Styles {
-    <link rel="stylesheet" href="~/css/myrequests.css" />
+    <link rel="stylesheet"
+          href="~/css/myrequests.css" />
 }
 
-<div class="container-fluid myrequests-page">
+<div class="container-fluid">
 
     <div class="card shadow">
 
-        <div class="card-header d-flex justify-content-between align-items-center">
+        <div class="card-header">
 
             <h3>All Requests</h3>
 
@@ -20,35 +21,48 @@
 
         <div class="card-body">
 
-            <form method="get"
-                  id="filterForm"
+            <form id="filterForm"
                   class="row mb-3">
 
                 <div class="col-md-4">
 
-                    <input class="form-control"
+                    <input type="text"
+                           id="searchInput"
                            name="search"
                            value="@ViewBag.Search"
+                           class="form-control"
                            placeholder="Search request..." />
 
                 </div>
 
                 <div class="col-md-3">
 
-                    <select class="form-select"
+                    <select id="statusFilter"
                             name="status"
-                            onchange="document.getElementById('filterForm').submit();">
+                            class="form-select">
 
-                        <option value="All">All Status</option>
+                        <option value="All">
+                            All Status
+                        </option>
 
                         <option value="Pending"
                                 selected="@(ViewBag.Status == "Pending")">
                             Pending
                         </option>
 
-                        <option value="Approved"
-                                selected="@(ViewBag.Status == "Approved")">
-                            Approved
+                        <option value="Approved by Help Desk"
+                                selected="@(ViewBag.Status == "Approved by Help Desk")">
+                            Approved by Help Desk
+                        </option>
+
+                        <option value="Approved by Supervisor"
+                                selected="@(ViewBag.Status == "Approved by Supervisor")">
+                            Approved by Supervisor
+                        </option>
+
+                        <option value="Approved by Manager"
+                                selected="@(ViewBag.Status == "Approved by Manager")">
+                            Approved by Manager
                         </option>
 
                         <option value="Rejected"
@@ -69,126 +83,28 @@
                     </select>
 
                 </div>
-                                
+
                 <div class="col-md-2">
 
-                    <a asp-action="RequestList"
-                       class="btn btn-secondary w-100">
+                    <button type="button"
+                            id="clearFilter"
+                            class="btn btn-secondary w-100">
 
                         Clear
 
-                    </a>
+                    </button>
 
                 </div>
 
             </form>
 
-            <table class="table table-hover align-middle">
 
-                <thead>
+            <div id="requestTableContainer">
 
-                    <tr>
+                <partial name="_RequestListTable"
+                         model="@Model" />
 
-                        <th>Ref. #</th>
-                        <th>Title</th>
-                        <th>Request Type</th>
-                        <th>Date Submitted</th>
-                        <th>Status</th>
-                        <th width="220">Action</th>
-
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    @if (Model.Any())
-                    {
-                        foreach (var item in Model)
-                        {
-                            <tr>
-
-                                <td>@item.ReferenceNumber</td>
-
-                                <td>@item.Title</td>
-
-                                <td>@item.RequestType?.RequestTypeName</td>
-
-                                <td>@item.DateSubmitted.ToString("MMM dd, yyyy")</td>
-
-                                <td>
-                                    @{
-                                        var badge = item.Status?.StatusName switch
-                                        {
-                                            "Pending" => "bg-warning text-dark",
-                                            "Approved by Help Desk" => "border border-2 border-primary text-black bg-primary-subtle",
-                                            "Approved by Supervisor" => "border border-2 border-success text-black bg-success-subtle",
-                                            "Approved by Manager" => "bg-success",
-                                            "Rejected" => "bg-danger",
-                                            "In Progress" => "bg-primary",
-                                            "Completed" => "bg-secondary",
-                                            _ => "bg-dark"
-                                        };
-                                    }
-
-                                    <span class="badge @badge">
-                                        @item.Status?.StatusName
-                                    </span>
-                                </td>
-
-                                <td>
-
-                                    <a asp-controller="HelpDesk"
-                                       asp-action="Review"
-                                       asp-route-id="@item.RequestId"
-                                       class="btn btn-info btn-sm d-inline-flex align-items-center justify-content-center">
-
-                                        View
-
-                                    </a>
-
-                                    @if (item.Status?.StatusName == "Pending")
-                                    {
-                                        <button type="button"
-                                                class="btn btn-success btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
-                                                data-id="@item.RequestId"
-                                                data-action="Approved"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#approvalModal">
-
-                                            Approve
-
-                                        </button>
-
-                                        <button type="button"
-                                                class="btn btn-danger btn-sm d-inline-flex align-items-center justify-content-center approval-btn"
-                                                data-id="@item.RequestId"
-                                                data-action="Rejected"
-                                                data-bs-toggle="modal"
-                                                data-bs-target="#approvalModal">
-
-                                            Reject
-
-                                        </button>
-                                    }
-
-                                </td>
-
-                            </tr>
-                        }
-                    }
-                    else
-                    {
-                        <tr>
-                            <td colspan="6" class="text-center text-muted py-4">
-                                No requests found.
-                            </td>
-                        </tr>
-                    }
-
-                </tbody>
-
-            </table>
+            </div>
 
         </div>
 
@@ -196,29 +112,207 @@
 
 </div>
 
-<partial name="_ApprovalModal" model="@("HelpDesk")" />
+<partial name="_ApprovalModal"
+         model="@("HelpDesk")" />
 
 @section Scripts {
 
     <script>
 
-        let timer;
+        document.addEventListener("DOMContentLoaded", function() {
 
-        const form =
-            document.getElementById("filterForm");
+            const searchInput =
+                document.getElementById("searchInput");
 
-        const search =
-            document.querySelector("input[name='search']");
+            const statusFilter =
+                document.getElementById("statusFilter");
 
-        search.addEventListener("keyup", function () {
+            const clearFilter =
+                document.getElementById("clearFilter");
 
-            clearTimeout(timer);
+            const tableContainer =
+                document.getElementById("requestTableContainer");
 
-            timer = setTimeout(function () {
 
-                form.submit();
+            let searchTimer;
 
-            }, 500);
+
+            async function loadRequests() {
+
+                const search =
+                    searchInput.value;
+
+                const status =
+                    statusFilter.value;
+
+
+                const params =
+                    new URLSearchParams();
+
+                tableContainer.addEventListener("click", function(event) {
+
+                    const button =
+                        event.target.closest(".approval-btn");
+
+                    if (!button)
+                        return;
+
+                    const requestId =
+                        button.dataset.id;
+
+                    const action =
+                        button.dataset.action;
+
+                    const requestIdInput =
+                        document.getElementById("approvalRequestId");
+
+                    const decisionInput =
+                        document.getElementById("approvalDecision");
+
+                    const message =
+                        document.getElementById("approvalMessage");
+
+                    const confirmButton =
+                        document.getElementById("approvalConfirmButton");
+
+                    requestIdInput.value = requestId;
+                    decisionInput.value = action;
+
+                    if (action === "Approved") {
+
+                        message.textContent =
+                            "Are you sure you want to approve this request?";
+
+                        confirmButton.textContent =
+                            "Approve";
+
+                        confirmButton.className =
+                            "btn btn-success";
+
+                    }
+                    else {
+
+                        message.textContent =
+                            "Are you sure you want to reject this request?";
+
+                        confirmButton.textContent =
+                            "Reject";
+
+                        confirmButton.className =
+                            "btn btn-danger";
+                    }
+
+                });
+
+                if (search.trim() !== "") {
+                    params.append("search", search);
+                }
+
+                if (status !== "All") {
+                    params.append("status", status);
+                }
+
+
+                tableContainer.innerHTML = `
+                            <div class="text-center py-4">
+                                <div class="spinner-border"
+                                     role="status">
+
+                                    <span class="visually-hidden">
+                                        Loading...
+                                    </span>
+
+                                </div>
+                            </div>
+                        `;
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            `/HelpDesk/RequestList?${params.toString()}`,
+                            {
+                                headers: {
+                                    "X-Requested-With":
+                                        "XMLHttpRequest"
+                                }
+                            }
+                        );
+
+
+                    if (!response.ok) {
+                        throw new Error(
+                            `HTTP error ${response.status}`
+                        );
+                    }
+
+
+                    const html =
+                        await response.text();
+
+
+                    tableContainer.innerHTML =
+                        html;
+
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "Failed to load requests:",
+                        error
+                    );
+
+                    tableContainer.innerHTML = `
+                                <div class="alert alert-danger">
+                                    Failed to load requests.
+                                </div>
+                            `;
+
+                }
+
+            }
+
+
+            searchInput.addEventListener(
+                "input",
+                function() {
+
+                    clearTimeout(searchTimer);
+
+                    searchTimer =
+                        setTimeout(
+                            loadRequests,
+                            400
+                        );
+
+                }
+            );
+
+
+            statusFilter.addEventListener(
+                "change",
+                function() {
+
+                    loadRequests();
+
+                }
+            );
+
+
+            clearFilter.addEventListener(
+                "click",
+                function() {
+
+                    searchInput.value = "";
+
+                    statusFilter.value = "All";
+
+                    loadRequests();
+
+                }
+            );
 
         });
 

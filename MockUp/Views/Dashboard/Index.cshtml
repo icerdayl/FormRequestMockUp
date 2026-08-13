@@ -6,6 +6,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/dashboard.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/frappe-gantt@1.2.2/dist/frappe-gantt.css" />
 }
 
 <div class="container-fluid">
@@ -48,7 +49,7 @@
             <div class="stat-card-compact shadow-sm h-100 py-2 px-3 card border-0 border-start border-4 border-success">
 
                 <i class="bi bi-check-circle"></i>
-                <h5>Approved</h5>
+                <h5>Approved (Final)</h5>
                 <h2>@Model.ApprovedRequests</h2>
 
             </div>
@@ -105,7 +106,7 @@
         </div>
 
     </div>
-    
+
     @* ==============================
     HIGH PRIORITY REQUESTS
     ============================== *@
@@ -306,314 +307,368 @@
                                     <td>
                                         @item.StartDate?.ToString("MMM dd, yyyy")
 
-                                    <td>
-                                        @item.PreferredCompletionDate.ToString("MMM dd, yyyy")
-                                    </td>
+                                        <td>
+                                            @item.PreferredCompletionDate.ToString("MMM dd, yyyy")
+                                        </td>
 
-                                    <td>
-                                        <span class="deadline-badge @deadlineClass">
-                                            @deadlineText
-                                        </span>
+                                        <td>
+                                            <span class="deadline-badge @deadlineClass">
+                                                @deadlineText
+                                            </span>
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                        else
+                            {
+                                <tr>
+
+                                    <td colspan="5" class="text-center text-muted">
+
+                                        No open requests with a deadline.
+
                                     </td>
 
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
 
-                                <td colspan="5" class="text-center text-muted">
+                        </tbody>
 
-                                    No open requests with a deadline.
+                    </table>
 
-                                </td>
-
-                            </tr>
-                        }
-
-                    </tbody>
-
-                </table>
+                </div>
 
             </div>
 
         </div>
-
-    </div>
 
     @*==============================
     RECENT REQUESTS
     ============================== *@
 
-    <div class="card shadow mt-4">
+        <div class="card shadow mt-4">
 
-        <div class="card-header">
+            <div class="card-header">
 
-            <h5 class="mb-0">Recent Requests</h5>
+                <h5 class="mb-0">Recent Requests</h5>
 
-        </div>
+            </div>
 
-        <div class="card-body">
+            <div class="card-body">
 
-            <div class="table-responsive">
+                <div class="table-responsive">
 
-                <table class="table table-hover align-middle">
+                    <table class="table table-hover align-middle">
 
-                    <thead>
+                        <thead>
 
-                        <tr>
+                            <tr>
 
-                            <th>Reference No.</th>
-                            <th>Title</th>
-                            <th>Request Type</th>
-                            <th>Status</th>
-                            <th>Date Submitted</th>
+                                <th>Reference No.</th>
+                                <th>Title</th>
+                                <th>Request Type</th>
+                                <th>Status</th>
+                                <th>Date Submitted</th>
 
-                        </tr>
+                            </tr>
 
-                    </thead>
+                        </thead>
 
-                    <tbody>
+                        <tbody>
 
-                        @if (Model.RecentRequests.Any())
-                        {
-                            @foreach (var item in Model.RecentRequests)
+                            @if (Model.RecentRequests.Any())
+                            {
+                                @foreach (var item in Model.RecentRequests)
+                                {
+                                    <tr>
+
+                                        <td>
+
+                                            <strong>
+                                                @item.ReferenceNumber
+                                            </strong>
+
+                                        </td>
+
+                                        <td>@item.Title</td>
+
+                                        <td>@item.RequestType?.RequestTypeName</td>
+
+                                        <td>
+                                            @{
+                                                var badge = item.Status?.StatusName switch
+                                                {
+                                                    "Pending" => "bg-warning text-dark",
+                                                    "Approved by Help Desk" => "border border-2 border-primary text-black bg-primary-subtle",
+                                                    "Approved by Supervisor" => "border border-2 border-success text-black bg-success-subtle",
+                                                    "Approved by Manager" => "bg-success",
+                                                    "Rejected" => "bg-danger",
+                                                    "In Progress" => "bg-primary",
+                                                    "Completed" => "bg-secondary",
+                                                    _ => "bg-dark"
+                                                };
+                                            }
+
+                                            <span class="badge @badge">
+                                                @item.Status?.StatusName
+                                            </span>
+                                        </td>
+
+                                        <td>
+
+                                            @item.DateSubmitted.ToString("MMM dd, yyyy")
+
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
                             {
                                 <tr>
 
-                                    <td>
+                                    <td colspan="5" class="text-center text-muted">
 
-                                        <strong>
-                                            @item.ReferenceNumber
-                                        </strong>
-
-                                    </td>
-
-                                    <td>@item.Title</td>
-
-                                    <td>@item.RequestType?.RequestTypeName</td>
-
-                                    <td>
-                                        @{
-                                            var badge = item.Status?.StatusName switch
-                                            {
-                                                "Pending" => "bg-warning text-dark",
-                                                "Approved by Help Desk" => "border border-2 border-primary text-black bg-primary-subtle",
-                                                "Approved by Supervisor" => "border border-2 border-success text-black bg-success-subtle",
-                                                "Approved by Manager" => "bg-success",
-                                                "Rejected" => "bg-danger",
-                                                "In Progress" => "bg-primary",
-                                                "Completed" => "bg-secondary",
-                                                _ => "bg-dark"
-                                            };
-                                        }
-
-                                        <span class="badge @badge">
-                                            @item.Status?.StatusName
-                                        </span>
-                                    </td>
-
-                                    <td>
-
-                                        @item.DateSubmitted.ToString("MMM dd, yyyy")
+                                        No requests submitted yet.
 
                                     </td>
 
                                 </tr>
                             }
-                        }
-                        else
-                        {
-                            <tr>
 
-                                <td colspan="5" class="text-center text-muted">
+                        </tbody>
 
-                                    No requests submitted yet.
+                    </table>
 
-                                </td>
-
-                            </tr>
-                        }
-
-                    </tbody>
-
-                </table>
+                </div>
 
             </div>
 
         </div>
 
-    </div>
-
     @*==============================
-    TIMELINE VIEW
+    GANTT CHART (grouped by developer)
     ============================== *@
 
-    <div class="card shadow mt-4">
+        <div class="card shadow mt-4">
 
-        <div class="card-header">
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-            <h5 class="mb-0">Task Timeline</h5>
+                <h5 class="mb-0">Gantt Chart — by Developer</h5>
 
-        </div>
-
-        <div class="card-body">
-
-            @if (Model.TimelineTasks.Any())
-            {
-                var windowStart = Model.TimelineTasks.Min(t => t.StartDate!.Value).Date.AddDays(-1);
-                var windowEnd = Model.TimelineTasks.Max(t => t.PreferredCompletionDate).Date.AddDays(1);
-
-                if (windowEnd <= windowStart)
+                @if (Model.GanttByDeveloper.Any())
                 {
-                    windowEnd = windowStart.AddDays(1);
+                    <div class="btn-group btn-group-sm" role="group" aria-label="Gantt view mode">
+
+                        <button type="button" class="btn btn-outline-secondary gantt-view-btn" data-mode="Day">Day</button>
+                        <button type="button" class="btn btn-outline-secondary gantt-view-btn active" data-mode="Week">Week</button>
+                        <button type="button" class="btn btn-outline-secondary gantt-view-btn" data-mode="Month">Month</button>
+
+                    </div>
                 }
 
-                var totalDays = (windowEnd - windowStart).TotalDays;
+            </div>
 
-                var todayOffset = (DateTime.Today - windowStart).TotalDays;
-                var todayPercent = Math.Min(100.0, Math.Max(0.0, todayOffset / totalDays * 100));
+            <div class="card-body">
 
-                <div class="timeline-wrapper">
+                @if (Model.GanttByDeveloper.Any())
+                {
+                    var groupIndex = 0;
 
-                    <div class="timeline-scale">
-                        <span style="left: 20%">@windowStart.ToString("MMM dd")</span>
-                        <span style="left: 99%">@windowEnd.ToString("MMM dd")</span>
+                    <div class="mt-1 mb-3 d-flex gap-3 small text-muted">
+                        <span><span class="badge" style="background-color:#dc3545;">&nbsp;</span> High Priority</span>
+                        <span><span class="badge" style="background-color:#fd7e14;">&nbsp;</span> Medium Priority</span>
+                        <span><span class="badge" style="background-color:#0d6efd;">&nbsp;</span> Low Priority</span>
                     </div>
 
-                    @foreach (var item in Model.TimelineTasks)
+                    foreach (var group in Model.GanttByDeveloper)
                     {
-                        var start = item.StartDate!.Value.Date;
-                        var end = item.PreferredCompletionDate.Date;
+                        var containerId = $"gantt-dev-{groupIndex}";
 
-                        if (end < start)
-                        {
-                            end = start;
-                        }
+                        <div class="gantt-group mb-4">
 
-                        var offsetDays = (start - windowStart).TotalDays;
-                        var durationDays = Math.Max(1, (end - start).TotalDays);
+                            <h6 class="d-flex align-items-center gap-2">
+                                <i class="bi bi-person-circle"></i>
+                                @group.Key
+                                <span class="badge bg-secondary">@group.Value.Count</span>
+                            </h6>
 
-                        var leftPercent = Math.Min(100.0, Math.Max(0.0, offsetDays / totalDays * 100));
-                        var widthPercent = Math.Min(100.0 - leftPercent, durationDays / totalDays * 100);
-
-                        var priorityClass = item.Priority switch
-                        {
-                            "High" => "priority-high",
-                            "Medium" => "priority-medium",
-                            _ => "priority-low"
-                        };
-
-                        <div class="timeline-row">
-
-                            <div class="timeline-label" title="@item.Title">
-                                @item.ReferenceNumber &middot; @item.Title
-                            </div>
-
-                            <div class="timeline-track">
-
-                                @if (todayPercent >= leftPercent && todayPercent <= 100)
-                                {
-                                    <div class="timeline-today-marker" style="left: @(todayPercent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%"></div>
-                                }
-
-                                <div class="timeline-bar @priorityClass"
-                                     style="left: @(leftPercent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%; width: @(widthPercent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%;"
-                                     title="@item.StartDate?.ToString("MMM dd") - @item.PreferredCompletionDate.ToString("MMM dd")">
-                                </div>
-
-                            </div>
+                            <div id="@containerId" class="gantt-target"></div>
 
                         </div>
+
+                        groupIndex++;
                     }
+                }
+                else
+                {
+                    <p class="text-muted text-center mb-0">
+                        No scheduled tasks yet. Add a Start Date to a request to see it here.
+                    </p>
+                }
 
-                </div>
-
-                <div class="mt-3 d-flex gap-3 small text-muted">
-                    <span><span class="badge" style="background-color:#dc3545;">&nbsp;</span> High Priority</span>
-                    <span><span class="badge" style="background-color:#fd7e14;">&nbsp;</span> Medium Priority</span>
-                    <span><span class="badge" style="background-color:#0d6efd;">&nbsp;</span> Low Priority</span>
-                </div>
-            }
-            else
-            {
-                <p class="text-muted text-center mb-0">
-                    No scheduled tasks yet. Add a Start Date to a request to see it here.
-                </p>
-            }
+            </div>
 
         </div>
 
-    </div>
 
     @* ==============================
     STATUS CHART
     ============================== *@
 
-    <div class="card shadow mt-4 mb-4">
+        <div class="card shadow mt-4 mb-4">
 
-        <div class="card-header">
+            <div class="card-header">
 
-            <h5 class="mb-0">Requests by Status</h5>
+                <h5 class="mb-0">Requests by Status</h5>
 
-        </div>
+            </div>
 
-        <div class="card-body">
+            <div class="card-body">
 
-            <div class="status-chart-container">
-                <canvas id="statusChart"></canvas>
+                <div class="status-chart-container">
+                    <canvas id="statusChart"></canvas>
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
-</div>
+    @section Scripts {
 
-@section Scripts {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/frappe-gantt@1.2.2/dist/frappe-gantt.umd.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+        <script>
 
-    <script>
+            (function() {
 
-        const statusLabels = @Html.Raw(Json.Serialize(Model.StatusBreakdown.Keys));
-        const statusData = @Html.Raw(Json.Serialize(Model.StatusBreakdown.Values));
+                const ganttData = @Html.Raw(Json.Serialize(
+                    Model.GanttByDeveloper.Select((g, groupIndex) => new
+                    {
+                        containerId = "gantt-dev-" + groupIndex,
+                        tasks = g.Value.Select(r => new
+                        {
+                            id = "req-" + r.RequestId,
+                                name = r.ReferenceNumber + " - " + r.Title,
+                                start = (r.StartDate ?? r.PreferredCompletionDate).ToString("yyyy-MM-dd"),
+                                end = (r.PreferredCompletionDate < (r.StartDate ?? r.PreferredCompletionDate)
+                                ? (r.StartDate ?? r.PreferredCompletionDate)
+                                : r.PreferredCompletionDate).ToString("yyyy-MM-dd"),
+                                progress = r.Status!.StatusName == "Completed" ? 100 :
+                                     r.Status!.StatusName == "In Progress" ? 50 : 0,
+                                custom_class = r.Priority == "High" ? "gantt-priority-high" :
+                                     r.Priority == "Medium" ? "gantt-priority-medium" :
+                                                                                                                                "gantt-priority-low"
+                                })
+                         })
+                    ));
 
-        const statusCtx = document.getElementById("statusChart");
+                const instances = [];
 
-        if (statusCtx) {
+                ganttData.forEach(function(group) {
 
-            new Chart(statusCtx, {
-                type: "bar",
-                data: {
-                    labels: statusLabels,   
-                    datasets: [{
-                        label: "Requests",
-                        data: statusData,
-                        backgroundColor: [
-                            "#198754", "#0d6efd", "#6c757d",
-                            "#ffc107", "#dc3545", "#fd7e14", "#343a40"
-                        ]
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
+                    const target = document.getElementById(group.containerId);
+
+                    if (!target || group.tasks.length === 0) {
+                        return;
+                    }
+
+                    const gantt = new Gantt(target, group.tasks, {
+                        view_mode: "Week",
+                        readonly: true,
+                        readonly_dates: true,
+                        readonly_progress: true,
+                        language: "en"
+                    });
+
+                    instances.push(gantt);
+
+                });
+
+                const viewButtons = document.querySelectorAll(".gantt-view-btn");
+
+                viewButtons.forEach(function(button) {
+
+                    button.addEventListener("click", function() {
+
+                        const mode = this.dataset.mode;
+
+                        instances.forEach(function(gantt) {
+                            gantt.change_view_mode(mode);
+                        });
+
+                        viewButtons.forEach(function(btn) {
+                            btn.classList.remove("active");
+                        });
+
+                        this.classList.add("active");
+
+                    });
+
+                });
+
+                document.querySelectorAll(".gantt-target").forEach(function(target) {
+
+                    target.addEventListener("wheel", function(e) {
+
+                        if (target.scrollWidth <= target.clientWidth) {
+                            return; 
+                        }
+
+                        e.preventDefault();
+                        target.scrollLeft += e.deltaY;
+
+                    }, { passive: false });
+
+                });
+
+            })();
+
+        </script>
+
+        <script>
+
+            const statusLabels = @Html.Raw(Json.Serialize(Model.StatusBreakdown.Keys));
+            const statusData = @Html.Raw(Json.Serialize(Model.StatusBreakdown.Values));
+
+            const statusCtx = document.getElementById("statusChart");
+
+            if (statusCtx) {
+
+                new Chart(statusCtx, {
+                    type: "bar",
+                    data: {
+                        labels: statusLabels,
+                        datasets: [{
+                            label: "Requests",
+                            data: statusData,
+                            backgroundColor: [
+                                "#198754", "#0d6efd", "#6c757d",
+                                "#ffc107", "#dc3545", "#fd7e14", "#343a40"
+                            ]
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { precision: 0 }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0 }
+                            }
                         }
                     }
-                }
-            });
+                });
 
-        }
+            }
 
-    </script>
+        </script>
 
-}
+    }

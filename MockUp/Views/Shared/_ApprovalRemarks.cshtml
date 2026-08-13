@@ -1,0 +1,41 @@
+@model RequestForm.Models.ViewModels.ApprovalRemarksViewModel
+
+@{
+    var hasAny =
+        !string.IsNullOrWhiteSpace(Model?.HelpDeskRemarks) ||
+        !string.IsNullOrWhiteSpace(Model?.SupervisorRemarks) ||
+        !string.IsNullOrWhiteSpace(Model?.ManagerRemarks);
+}
+
+@if (hasAny)
+{
+    <div class="mb-4">
+
+        <label class="fw-bold d-block mb-2">Remarks</label>
+
+        @if (!string.IsNullOrWhiteSpace(Model!.HelpDeskRemarks))
+        {
+            <div class="mb-2">
+                <div class="small text-muted fw-semibold">Help Desk Remarks</div>
+                <p class="mb-0">@Model.HelpDeskRemarks</p>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model!.SupervisorRemarks))
+        {
+            <div class="mb-2">
+                <div class="small text-muted fw-semibold">Supervisor Remarks</div>
+                <p class="mb-0">@Model.SupervisorRemarks</p>
+            </div>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(Model!.ManagerRemarks))
+        {
+            <div class="mb-2">
+                <div class="small text-muted fw-semibold">Manager Remarks</div>
+                <p class="mb-0">@Model.ManagerRemarks</p>
+            </div>
+        }
+
+    </div>
+}

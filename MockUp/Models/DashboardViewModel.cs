@@ -31,12 +31,13 @@
         public List<Request> DeadlineWatch { get; set; } = new();
 
         // ==========================================
-        // TIMELINE / GRAPH
+        // GANTT CHART
         // ==========================================
 
-        // Open requests that have a StartDate set,
-        // used to draw the task timeline
-        public List<Request> TimelineTasks { get; set; } = new();
+        // Open (non-rejected) requests that have a StartDate set,
+        // grouped by their currently assigned developer
+        // ("Unassigned" bucket for requests with no current assignment).
+        public Dictionary<string, List<Request>> GanttByDeveloper { get; set; } = new();
 
         // Request count grouped by actual status name,
         // used to draw the status graph

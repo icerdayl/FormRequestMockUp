@@ -5,10 +5,13 @@ namespace RequestForm.Interfaces
 {
     public interface IHelpDeskService
     {
-       
+
+        // FOR SEARCH AND FILTER
         Task<List<Request>> GetRequestList(
             string? search,
             string? status);
+
+        // ASSIGNMENT 
 
         Task<AssignmentPageViewModel> GetAssignments(
             string? search,
@@ -23,7 +26,5 @@ namespace RequestForm.Interfaces
             string remarks);
 
         Task<Request?> GetRequestForReview(int id);
-
-        Task<RequestApproval?> GetLatestApproval(int requestId);
     }
 }

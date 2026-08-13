@@ -14,7 +14,8 @@ namespace RequestForm.Services
         {
             _context = context;
         }
-                
+
+        // REQUEST LISTING AND FILTERING
         public async Task<List<Request>> GetRequestList(
             string? search,
             string? status)
@@ -45,6 +46,7 @@ namespace RequestForm.Services
                 .ToListAsync();
         }
 
+        // ASSIGNMENT LISTING AND FILTERING
         public async Task<AssignmentPageViewModel> GetAssignments(
             string? search,
             string? status)
@@ -131,6 +133,7 @@ namespace RequestForm.Services
             return true;
         }
 
+        // APPROVALS
         public async Task<bool> UpdateStatus(
             int requestId,
             string status,
@@ -141,6 +144,9 @@ namespace RequestForm.Services
                     r.RequestId == requestId);
 
             if (request == null)
+                return false;
+                       
+            if (request.StatusId != 1)
                 return false;
 
             var approval = await _context.RequestApprovals
@@ -196,15 +202,6 @@ namespace RequestForm.Services
                 .Include(r => r.Status)
                 .FirstOrDefaultAsync(r =>
                     r.RequestId == id);
-        }
-
-        public async Task<RequestApproval?> GetLatestApproval(
-            int requestId)
-        {
-            return await _context.RequestApprovals
-                .Where(a => a.RequestId == requestId)
-                .OrderByDescending(a => a.DecisionDate)
-                .FirstOrDefaultAsync();
         }
     }
 }

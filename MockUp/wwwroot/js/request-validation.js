@@ -144,6 +144,8 @@ if (startDateInput) {
 
 }
 
+// FORM VALIDATION
+
 const form = document.querySelector("form");
 
 form.addEventListener("submit", function (e) {
@@ -165,6 +167,9 @@ form.addEventListener("submit", function (e) {
     }
 
     if (countWords(title.value) === 0) {
+
+        titleError.textContent =
+            "Fill out the title";
 
         valid = false;
 
@@ -188,14 +193,14 @@ form.addEventListener("submit", function (e) {
 
     }
 
-    else if (countWords(description.value) < 9) {
+    // else if (countWords(description.value) < 9) {
 
-        descriptionError.textContent =
-            "The description must be at least 9 words long.";
+    //     descriptionError.textContent =
+    //         "The description must be at least 9 words long.";
 
-        valid = false;
+    //     valid = false;
 
-    }
+    // }
 
     if (dateOrderError) {
         dateOrderError.textContent = "";
