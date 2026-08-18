@@ -40,7 +40,7 @@ namespace RequestForm.Services
             dashboard.RecentRequests =
                 await _context.Requests
                     .Include(x => x.Status)
-                    .Include(x => x.RequestType)
+                    .Include(x => x.TicketType)
                     .OrderByDescending(x => x.DateSubmitted)
                     .Take(5)
                     .ToListAsync();
@@ -48,7 +48,7 @@ namespace RequestForm.Services
             dashboard.HighPriorityRequests =
                 await _context.Requests
                     .Include(x => x.Status)
-                    .Include(x => x.RequestType)
+                    .Include(x => x.TicketType)
                     .Where(x => x.Priority == "High" &&
                          x.Status!.StatusName != "Completed")
                     .OrderByDescending(x => x.DateSubmitted)
@@ -63,7 +63,7 @@ namespace RequestForm.Services
 
             var openRequests = await _context.Requests
                 .Include(x => x.Status)
-                .Include(x => x.RequestType)
+                .Include(x => x.TicketType)
                 .Where(x =>
                     x.Status!.StatusName != "Completed" &&
                     x.Status!.StatusName != "Rejected")

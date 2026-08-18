@@ -1,4 +1,4 @@
-﻿@model RequestForm.Models.ViewModels.AssignmentPageViewModel
+@model RequestForm.Models.ViewModels.AssignmentPageViewModel
 
 @{
     ViewData["Title"] = "My Requests";
@@ -84,7 +84,7 @@
 
                         <th>Ref. #</th>
                         <th>Title</th>
-                        <th>Request Type</th>
+                        <th>Ticket Type</th>
                         <th>Date Submitted</th>
                         <th>Status</th>
                         <th width="220">Action</th>
@@ -105,7 +105,7 @@
 
                                 <td>@item.Title</td>
 
-                                <td>@item.RequestType?.RequestTypeName</td>
+                                <td>@item.TicketType?.TicketTypeName</td>
 
                                 <td>@item.DateSubmitted.ToString("MMM dd, yyyy")</td>
 

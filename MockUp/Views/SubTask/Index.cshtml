@@ -1,0 +1,232 @@
+﻿@model List<RequestForm.Models.SubTask>
+@{
+    ViewData["Title"] = "Subtasks";
+    var feature = ViewBag.Feature as RequestForm.Models.Feature;
+    var developers = ViewBag.Developers as List<string>;
+
+    var doneCount = Model.Count(s => s.Status == "Done");
+    var totalCount = Model.Count;
+    var percent = totalCount == 0 ? 0 : (int)Math.Round(100.0 * doneCount / totalCount);
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <div>
+                <h3 class="mb-0">Subtasks</h3>
+                <small class="text-muted">
+                    @feature?.Request?.ReferenceNumber &middot; @feature?.Title
+                </small>
+            </div>
+
+            <a asp-controller="Feature"
+               asp-action="Index"
+               asp-route-requestId="@feature?.RequestId"
+               class="btn btn-secondary">
+
+                Back to Features
+
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+
+            @if (totalCount > 0)
+            {
+                <div class="d-flex align-items-center gap-2 mb-4" style="max-width: 400px;">
+
+                    <div class="progress flex-grow-1" style="height: 10px;">
+                        <div class="progress-bar bg-success"
+                             style="width: @(percent)%;"></div>
+                    </div>
+
+                    <small class="text-muted text-nowrap">
+                        @doneCount / @totalCount done (@percent%)
+                    </small>
+
+                </div>
+            }
+
+            @* ===========================
+               CHECKLIST
+               =========================== *@
+
+            @if (Model.Any())
+            {
+                <div class="table-responsive mb-4">
+
+                    <table class="table align-middle">
+
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"></th>
+                                <th>Subtask</th>
+                                <th>Assigned To</th>
+                                <th>Start Date</th>
+                                <th>Due Date</th>
+                                <th>Man-Days</th>
+                                <th style="width: 60px;"></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var subTask in Model)
+                            {
+                                var isDone = subTask.Status == "Done";
+
+                                <tr class="@(isDone ? "table-light" : "")">
+
+                                    <td>
+
+                                        <form asp-action="ToggleDone" method="post">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden" name="id" value="@subTask.SubTaskId" />
+                                            <input type="hidden" name="featureId" value="@feature?.FeatureId" />
+
+                                            <button type="submit"
+                                                    class="btn btn-sm p-0 border-0 bg-transparent"
+                                                    title="@(isDone ? "Mark as not done" : "Mark as done")">
+
+                                                <i class="bi @(isDone ? "bi-check-square-fill text-success" : "bi-square") fs-5"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                    <td class="@(isDone ? "text-decoration-line-through text-muted" : "")">
+                                        @subTask.Title
+                                    </td>
+
+                                    <td>
+                                        @(string.IsNullOrWhiteSpace(subTask.AssignedTo) ? "Unassigned" : subTask.AssignedTo)
+                                    </td>
+
+                                    <td>
+                                        @(subTask.StartDate?.ToString("MMM dd, yyyy") ?? "—")
+                                    </td>
+
+                                    <td>
+                                        @(subTask.DueDate?.ToString("MMM dd, yyyy") ?? "—")
+                                    </td>
+
+                                    <td>
+                                        @(subTask.EstimatedManDays?.ToString("0.##") ?? "—")
+                                    </td>
+
+                                    <td>
+
+                                        <form asp-action="Delete"
+                                              method="post"
+                                              onsubmit="return confirm('Delete this subtask?');">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden" name="id" value="@subTask.SubTaskId" />
+                                            <input type="hidden" name="featureId" value="@feature?.FeatureId" />
+
+                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+            }
+            else
+            {
+                <p class="text-muted">
+                    No subtasks yet. Add one below.
+                </p>
+            }
+
+            <hr />
+
+            @* ===========================
+               ADD SUBTASK
+               =========================== *@
+
+            <h5>Add Subtask</h5>
+
+            <form asp-action="Create" method="post" class="row g-3 align-items-end">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="FeatureId" value="@feature?.FeatureId" />
+
+                <div class="col-md-3">
+                    <label class="form-label">
+                        Title <span class="required">*</span>
+                    </label>
+                    <input type="text" name="Title" class="form-control" required />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Assigned To</label>
+                    <select name="AssignedTo" class="form-select">
+                        <option value="">Unassigned</option>
+                        @if (developers != null)
+                        {
+                            @foreach (var dev in developers)
+                            {
+                                <option value="@dev">@dev</option>
+                            }
+                        }
+                    </select>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Start Date</label>
+                    <input type="date" name="StartDate" class="form-control" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Due Date</label>
+                    <input type="date" name="DueDate" class="form-control" />
+                </div>
+
+                <div class="col-md-2">
+                    <label class="form-label">Man-Days</label>
+                    <input type="number" name="EstimatedManDays" class="form-control" step="0.5" min="0" />
+                </div>
+
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100">
+                        Add
+                    </button>
+                </div>
+
+                <div class="col-12">
+                    <label class="form-label">Description (optional)</label>
+                    <textarea name="Description" class="form-control" rows="2"></textarea>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

@@ -22,7 +22,7 @@ namespace RequestForm.Services
             string? search)
         {
             var query = _context.Requests
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .Include(r => r.Status)
                 .Where(r => r.Status!.StatusName == "Approved by Supervisor")
                 .AsQueryable();
@@ -47,7 +47,7 @@ namespace RequestForm.Services
         public async Task<Request?> GetRequestForReview(int id)
         {
             return await _context.Requests
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .Include(r => r.Status)
                 .FirstOrDefaultAsync(r =>
                     r.RequestId == id);

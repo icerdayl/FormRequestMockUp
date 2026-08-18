@@ -20,7 +20,7 @@ namespace RequestForm.Services
         {
             var query = _context.Requests
                 .Include(r => r.Status)
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .Where(r =>
                     r.Status!.StatusName ==
                     "Approved by Help Desk")
@@ -41,7 +41,7 @@ namespace RequestForm.Services
         public async Task<Request?> GetRequestForReview(int id)
         {
             return await _context.Requests
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .Include(r => r.Status)
                 .FirstOrDefaultAsync(r =>
                     r.RequestId == id);

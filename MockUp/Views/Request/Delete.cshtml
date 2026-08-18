@@ -1,4 +1,4 @@
-﻿@model RequestForm.Models.Request
+@model RequestForm.Models.Request
 
 @{
     ViewData["Title"] = "Delete Request";
@@ -43,11 +43,11 @@
                 </dd>
 
                 <dt class="col-sm-3">
-                    Request Type
+                    Ticket Type
                 </dt>
 
                 <dd class="col-sm-9">
-                    @Model.RequestType?.RequestTypeName
+                    @Model.TicketType?.TicketTypeName
                 </dd>
 
             </dl>

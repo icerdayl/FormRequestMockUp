@@ -1,0 +1,263 @@
+﻿@model List<RequestForm.Models.Feature>
+@{
+    ViewData["Title"] = "Features";
+    var request = ViewBag.Request as RequestForm.Models.Request;
+    var commonFeatures = ViewBag.CommonFeatures as List<RequestForm.Models.CommonFeature>;
+}
+
+<div class="container-fluid">
+
+    <div class="card shadow">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <div>
+                <h3 class="mb-0">Features</h3>
+                <small class="text-muted">
+                    @request?.ReferenceNumber &middot; @request?.Title
+                </small>
+            </div>
+
+            <a asp-controller="Request"
+               asp-action="Details"
+               asp-route-id="@request?.RequestId"
+               class="btn btn-secondary">
+
+                Back to Request
+
+            </a>
+
+        </div>
+
+        <div class="card-body">
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
+
+            @* ===========================
+               EXISTING FEATURES
+               =========================== *@
+
+            @if (Model.Any())
+            {
+                @foreach (var feature in Model)
+                {
+                    var doneCount = feature.SubTasks.Count(s => s.Status == "Done");
+                    var totalCount = feature.SubTasks.Count;
+                    var percent = totalCount == 0 ? 0 : (int)Math.Round(100.0 * doneCount / totalCount);
+
+                    <div class="card mb-3">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-start">
+
+                                <div class="flex-grow-1">
+
+                                    <h5 class="mb-1">@feature.Title</h5>
+
+                                    <span class="badge bg-secondary mb-2">
+                                        @feature.Priority Priority
+                                    </span>
+
+                                    @if (!string.IsNullOrWhiteSpace(feature.Description))
+                                    {
+                                        <p class="mb-1">@feature.Description</p>
+                                    }
+
+                                    @if (!string.IsNullOrWhiteSpace(feature.AcceptanceCriteria))
+                                    {
+                                        <p class="mb-2 small text-muted">
+                                            <strong>Acceptance Criteria:</strong>
+                                            @feature.AcceptanceCriteria
+                                        </p>
+                                    }
+
+                                    @if (totalCount > 0)
+                                    {
+                                        <div class="d-flex align-items-center gap-2 mb-1" style="max-width: 300px;">
+
+                                            <div class="progress flex-grow-1" style="height: 8px;">
+                                                <div class="progress-bar bg-success"
+                                                     style="width: @(percent)%;"></div>
+                                            </div>
+
+                                            <small class="text-muted">
+                                                @doneCount / @totalCount done
+                                            </small>
+
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-0 small text-muted">
+                                            No subtasks yet.
+                                        </p>
+                                    }
+
+                                </div>
+
+                                <div class="d-flex gap-2 flex-shrink-0">
+
+                                    <a asp-controller="SubTask"
+                                       asp-action="Index"
+                                       asp-route-featureId="@feature.FeatureId"
+                                       class="btn btn-outline-primary btn-sm">
+
+                                        Manage Subtasks
+
+                                    </a>
+
+                                    <form asp-action="Delete"
+                                          method="post"
+                                          onsubmit="return confirm('Delete this feature and all its subtasks?');">
+
+                                        @Html.AntiForgeryToken()
+
+                                        <input type="hidden" name="id" value="@feature.FeatureId" />
+                                        <input type="hidden" name="requestId" value="@request?.RequestId" />
+
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            Delete
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">
+                    No features yet. Add one below to get started.
+                </p>
+            }
+
+            <hr />
+
+            @* ===========================
+               ADD FEATURE
+               =========================== *@
+
+            <h5>Add Feature</h5>
+
+            <form asp-action="Create" method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden" name="RequestId" value="@request?.RequestId" />
+
+                <div class="mb-3">
+
+                    <label class="form-label">Quick-fill from a common feature</label>
+
+                    <select id="commonFeaturePicker" class="form-select">
+
+                        <option value="">— Start from scratch —</option>
+
+                        @if (commonFeatures != null)
+                        {
+                            @for (int i = 0; i < commonFeatures.Count; i++)
+                            {
+                                <option value="@i">@commonFeatures[i].Label</option>
+                            }
+                        }
+
+                    </select>
+
+                    <small class="text-muted">
+                        Picks a starting point you can edit — nothing is locked in.
+                    </small>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Title <span class="required">*</span>
+                    </label>
+
+                    <input type="text" id="featureTitle" name="Title" class="form-control" required />
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">Description</label>
+
+                    <textarea id="featureDescription" name="Description" class="form-control" rows="2"></textarea>
+
+                </div>
+
+                <div class="mb-3">
+
+                    <label class="form-label">Acceptance Criteria</label>
+
+                    <textarea name="AcceptanceCriteria" class="form-control" rows="2"></textarea>
+
+                </div>
+
+                <div class="mb-3 col-md-3">
+
+                    <label class="form-label">Priority</label>
+
+                    <select name="Priority" class="form-select">
+                        <option>Low</option>
+                        <option selected>Medium</option>
+                        <option>High</option>
+                    </select>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary">
+                    Add Feature
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+
+    <script>
+
+        const commonFeatures = @Html.Raw(Json.Serialize(commonFeatures));
+
+        const picker = document.getElementById("commonFeaturePicker");
+        const titleInput = document.getElementById("featureTitle");
+        const descriptionInput = document.getElementById("featureDescription");
+
+        if (picker) {
+
+            picker.addEventListener("change", function() {
+
+                if (this.value === "") {
+                    return;
+                }
+
+                const selected = commonFeatures[parseInt(this.value, 10)];
+
+                if (selected) {
+                    titleInput.value = selected.label;
+                    descriptionInput.value = selected.description;
+                }
+
+            });
+
+        }
+
+    </script>
+
+}

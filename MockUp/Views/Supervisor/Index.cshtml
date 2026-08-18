@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RequestForm.Models.Request>
+@model IEnumerable<RequestForm.Models.Request>
 
 @{
     ViewData["Title"] = "Supervisor Approvals";
@@ -18,7 +18,7 @@
                 <tr>
                     <th>Ref. #</th>
                     <th>Title</th>
-                    <th>Request Type</th>
+                    <th>Ticket Type</th>
                     <th>Date Submitted</th>
                     <th>Status</th>
                     <th>Action</th>
@@ -42,7 +42,7 @@
                             </td>
 
                             <td>
-                                @item.RequestType?.RequestTypeName
+                                @item.TicketType?.TicketTypeName
                             </td>
 
                             <td>

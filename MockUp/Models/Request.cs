@@ -13,7 +13,7 @@ namespace RequestForm.Models
         public string Title { get; set; } = string.Empty;
 
         [Required]
-        public int RequestTypeId { get; set; }
+        public int TicketTypeId { get; set; }
 
         [MaxLength(30)]
         public string ReferenceNumber { get; set; } = string.Empty;
@@ -39,8 +39,8 @@ namespace RequestForm.Models
 
         public DateTime DateSubmitted { get; set; }
 
-        [ForeignKey(nameof(RequestTypeId))]
-        public RequestType? RequestType { get; set; }
+        [ForeignKey(nameof(TicketTypeId))]
+        public TicketType? TicketType { get; set; }
 
         [ForeignKey(nameof(StatusId))]
         public Status? Status { get; set; }
@@ -50,5 +50,8 @@ namespace RequestForm.Models
 
         public ICollection<RequestApproval> RequestApprovals { get; set; }
             = new List<RequestApproval>();
+
+        public ICollection<Feature> Features { get; set; }
+            = new List<Feature>();
     }
 }

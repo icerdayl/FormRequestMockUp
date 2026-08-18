@@ -1,4 +1,4 @@
-﻿@model IEnumerable<RequestForm.Models.Request>
+@model IEnumerable<RequestForm.Models.Request>
 
 <table class="table table-hover align-middle">
 
@@ -6,7 +6,7 @@
         <tr>
             <th>Ref. #</th>
             <th>Title</th>
-            <th>Request Type</th>
+            <th>Ticket Type</th>
             <th>Date Submitted</th>
             <th>Status</th>
             <th width="220">Action</th>
@@ -30,7 +30,7 @@
                     </td>
 
                     <td>
-                        @item.RequestType?.RequestTypeName
+                        @item.TicketType?.TicketTypeName
                     </td>
 
                     <td>

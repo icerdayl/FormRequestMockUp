@@ -1,4 +1,4 @@
-﻿@model RequestForm.Models.Request
+@model RequestForm.Models.Request
 
 @{
     ViewData["Title"] = "Request Details";
@@ -15,6 +15,15 @@
         <div class="card-header d-flex justify-content-between align-items-center">
 
             <h3>Request Details</h3>
+
+            <a asp-controller="Feature"
+               asp-action="Index"
+               asp-route-requestId="@Model.RequestId"
+               class="btn btn-outline-primary">
+
+                Features
+
+            </a>
 
             <a asp-action="MyRequests"
                class="btn btn-secondary">
@@ -39,9 +48,9 @@
 
                 <div class="col-md-6">
 
-                    <label class="fw-bold">Request Type</label>
+                    <label class="fw-bold">Ticket Type</label>
 
-                    <p>@Model.RequestType?.RequestTypeName</p>
+                    <p>@Model.TicketType?.TicketTypeName</p>
 
                 </div>
 

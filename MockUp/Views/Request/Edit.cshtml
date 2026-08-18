@@ -71,27 +71,27 @@
 
                         <label class="form-label">
 
-                            Request Type
+                            Ticket Type
 
                             <span class="required">*</span>
 
                         </label>
 
-                        <select asp-for="RequestTypeId"
+                        <select asp-for="TicketTypeId"
                                 class="form-select">
 
-                            <option value="">Select Request Type</option>
+                            <option value="">Select Ticket Type</option>
 
-                            @foreach (var item in ViewBag.RequestTypes)
+                            @foreach (var item in ViewBag.TicketTypes)
                             {
-                                <option value="@item.RequestTypeId">
-                                    @item.RequestTypeName
+                                <option value="@item.TicketTypeId">
+                                    @item.TicketTypeName
                                 </option>
                             }
 
                         </select>
 
-                        <span asp-validation-for="RequestTypeId"
+                        <span asp-validation-for="TicketTypeId"
                               class="text-danger"></span>
 
                     </div>

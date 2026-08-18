@@ -6,8 +6,6 @@ namespace RequestForm.Interfaces
     {
         Task<Request?> GetById(int id);
 
-        Task<List<RequestType>> GetRequestTypes();
-
         Task<List<Request>> GetMyRequests(
             string? search,
             string? status);

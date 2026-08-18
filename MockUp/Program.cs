@@ -20,6 +20,8 @@ builder.Services.AddScoped<IHelpDeskService, HelpDeskService>();
 builder.Services.AddScoped<IDashboardService, DashboardService>();
 builder.Services.AddScoped<ISupervisorService, SupervisorService>();
 builder.Services.AddScoped<IManagerService, ManagerService>();
+builder.Services.AddScoped<IFeatureService, FeatureService>();
+builder.Services.AddScoped<ISubTaskService, SubTaskService>();
 
 var app = builder.Build();
 

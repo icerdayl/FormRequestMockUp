@@ -69,27 +69,29 @@
 
                         <label class="form-label">
 
-                            Request Type
+                            Ticket Type
 
                             <span class="required">*</span>
 
                         </label>
 
-                        <select asp-for="RequestTypeId"
+                        <select asp-for="TicketTypeId"
+                                id="TicketTypeId"
                                 class="form-select">
 
-                            <option value="">Select Request Type</option>
+                            <option value="">Select Ticket Type</option>
 
-                            @foreach (var item in ViewBag.RequestTypes)
+                            @foreach (var item in ViewBag.TicketTypes)
                             {
-                                <option value="@item.RequestTypeId">
-                                    @item.RequestTypeName
+                                <option value="@item.TicketTypeId"
+                                        data-name="@item.TicketTypeName">
+                                    @item.TicketTypeName
                                 </option>
                             }
 
                         </select>
 
-                        <span asp-validation-for="RequestTypeId"
+                        <span asp-validation-for="TicketTypeId"
                               class="text-danger"></span>
 
                     </div>
@@ -143,6 +145,35 @@
 
                     <span class="section-number">
                         2
+                    </span>
+
+                    <h5>Features & Subtasks</h5>
+
+                </div>
+
+                <p class="text-muted small mb-3" id="featuresHint">
+                    Select a Ticket Type above to see suggested features and subtasks for this
+                    kind of request. Everything here is optional and fully editable — edit,
+                    remove, or add your own before submitting.
+                </p>
+
+                <div id="featuresBuilder"></div>
+
+                <button type="button"
+                        id="addFeatureBtn"
+                        class="btn btn-outline-primary btn-sm mb-4">
+
+                    + Add Feature
+
+                </button>
+
+                <input type="hidden" id="FeaturesJson" name="FeaturesJson" />
+
+                <hr>
+                <div class="section-header">
+
+                    <span class="section-number">
+                        3
                     </span>
 
                     <h5>Project Details</h5>
@@ -290,5 +321,20 @@
 @section Scripts{
 
     <script src="~/js/request-validation.js"></script>
+    <script src="~/js/request-features-builder.js"></script>
+
+    <script>
+
+        RequestFeaturesBuilder.init({
+            ticketTypeSelectId: "TicketTypeId",
+            builderContainerId: "featuresBuilder",
+            addFeatureButtonId: "addFeatureBtn",
+            hiddenInputId: "FeaturesJson",
+            formSelector: "form",
+            templates: @Html.Raw(Json.Serialize(RequestForm.Models.TicketTypeFeatureTemplates.Templates)),
+            developers: @Html.Raw(Json.Serialize(ViewBag.Developers))
+        });
+
+    </script>
 
 }

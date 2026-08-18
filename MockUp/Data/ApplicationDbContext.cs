@@ -12,41 +12,72 @@ namespace RequestForm.Data
 
         public DbSet<Request> Requests => Set<Request>();
 
-        public DbSet<RequestType> RequestTypes => Set<RequestType>();
+        public DbSet<TicketType> TicketTypes => Set<TicketType>();
 
         public DbSet<Status> Statuses => Set<Status>();
 
         public DbSet<RequestAssignment> RequestAssignments { get; set; }
 
         public DbSet<RequestApproval> RequestApprovals => Set<RequestApproval>();
+
+        public DbSet<Feature> Features => Set<Feature>();
+
+        public DbSet<SubTask> SubTasks => Set<SubTask>();
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.Entity<RequestType>().HasData(
+            // SubTask has two paths back to Request: directly, and
+            // through Feature. If both cascade-deleted, SQL Server
+            // rejects the schema ("multiple cascade paths"). The
+            // Feature -> SubTask cascade (default, since FeatureId
+            // is required) already deletes a Request's SubTasks
+            // transitively when the Request is deleted via its
+            // Features, so the direct Request -> SubTask FK only
+            // needs to Restrict, not cascade.
+            modelBuilder.Entity<SubTask>()
+                .HasOne(s => s.Request)
+                .WithMany()
+                .HasForeignKey(s => s.RequestId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-                new RequestType
+            modelBuilder.Entity<TicketType>().HasData(
+
+                new TicketType
                 {
-                    RequestTypeId = 1,
-                    RequestTypeName = "New Website"
+                    TicketTypeId = 1,
+                    TicketTypeName = "Bug"
                 },
 
-                new RequestType
+                new TicketType
                 {
-                    RequestTypeId = 2,
-                    RequestTypeName = "Enhancement"
+                    TicketTypeId = 2,
+                    TicketTypeName = "Feature Request"
                 },
 
-                new RequestType
+                new TicketType
                 {
-                    RequestTypeId = 3,
-                    RequestTypeName = "Bug Fix"
+                    TicketTypeId = 3,
+                    TicketTypeName = "Enhancement"
                 },
 
-                new RequestType
+                new TicketType
                 {
-                    RequestTypeId = 4,
-                    RequestTypeName = "Maintenance"
+                    TicketTypeId = 4,
+                    TicketTypeName = "Maintenance"
+                },
+
+                new TicketType
+                {
+                    TicketTypeId = 5,
+                    TicketTypeName = "Technical Support"
+                },
+
+                new TicketType
+                {
+                    TicketTypeId = 6,
+                    TicketTypeName = "Change Request"
                 }
 
             );

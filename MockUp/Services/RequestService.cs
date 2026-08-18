@@ -17,7 +17,7 @@ namespace RequestForm.Services
         public async Task<Request?> GetById(int id)
         {
             return await _context.Requests
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .Include(r => r.Status)
                 .FirstOrDefaultAsync(r => r.RequestId == id);
         }
@@ -46,7 +46,7 @@ namespace RequestForm.Services
 
             existing.Title = request.Title;
             existing.Description = request.Description;
-            existing.RequestTypeId = request.RequestTypeId;
+            existing.TicketTypeId = request.TicketTypeId;
             existing.Department = request.Department;
             existing.Priority = request.Priority;
             existing.StartDate = request.StartDate;
@@ -74,7 +74,7 @@ namespace RequestForm.Services
         {
             var query = _context.Requests
                 .Include(r => r.Status)
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .AsQueryable();
 
             // Later, filter by logged-in user here
@@ -96,12 +96,6 @@ namespace RequestForm.Services
 
             return await query
                 .OrderByDescending(r => r.DateSubmitted)
-                .ToListAsync();
-        }
-        public async Task<List<RequestType>> GetRequestTypes()
-        {
-            return await _context.RequestTypes
-                .OrderBy(r => r.RequestTypeName)
                 .ToListAsync();
         }
 

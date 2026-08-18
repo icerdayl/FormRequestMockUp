@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RequestForm.Data;
 
@@ -11,9 +12,11 @@ using RequestForm.Data;
 namespace ChangeRequest.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260817064157_AddTicketTypesFeaturesAndSubTasks")]
+    partial class AddTicketTypesFeaturesAndSubTasks
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -95,13 +98,16 @@ namespace ChangeRequest.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
+                    b.Property<int>("RequestTypeId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("int");
 
-                    b.Property<int>("TicketTypeId")
+                    b.Property<int?>("TicketTypeId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -110,6 +116,8 @@ namespace ChangeRequest.Migrations
                         .HasColumnType("nvarchar(150)");
 
                     b.HasKey("RequestId");
+
+                    b.HasIndex("RequestTypeId");
 
                     b.HasIndex("StatusId");
 
@@ -181,6 +189,46 @@ namespace ChangeRequest.Migrations
                     b.HasIndex("RequestId");
 
                     b.ToTable("RequestAssignments");
+                });
+
+            modelBuilder.Entity("RequestForm.Models.RequestType", b =>
+                {
+                    b.Property<int>("RequestTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("RequestTypeId"));
+
+                    b.Property<string>("RequestTypeName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("RequestTypeId");
+
+                    b.ToTable("RequestTypes");
+
+                    b.HasData(
+                        new
+                        {
+                            RequestTypeId = 1,
+                            RequestTypeName = "New Website"
+                        },
+                        new
+                        {
+                            RequestTypeId = 2,
+                            RequestTypeName = "Enhancement"
+                        },
+                        new
+                        {
+                            RequestTypeId = 3,
+                            RequestTypeName = "Bug Fix"
+                        },
+                        new
+                        {
+                            RequestTypeId = 4,
+                            RequestTypeName = "Maintenance"
+                        });
                 });
 
             modelBuilder.Entity("RequestForm.Models.Status", b =>
@@ -364,6 +412,12 @@ namespace ChangeRequest.Migrations
 
             modelBuilder.Entity("RequestForm.Models.Request", b =>
                 {
+                    b.HasOne("RequestForm.Models.RequestType", "RequestType")
+                        .WithMany()
+                        .HasForeignKey("RequestTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("RequestForm.Models.Status", "Status")
                         .WithMany()
                         .HasForeignKey("StatusId")
@@ -372,9 +426,9 @@ namespace ChangeRequest.Migrations
 
                     b.HasOne("RequestForm.Models.TicketType", "TicketType")
                         .WithMany()
-                        .HasForeignKey("TicketTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TicketTypeId");
+
+                    b.Navigation("RequestType");
 
                     b.Navigation("Status");
 

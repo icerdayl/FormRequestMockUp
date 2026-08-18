@@ -22,7 +22,7 @@ namespace RequestForm.Services
         {
             var query = _context.Requests
                 .Include(r => r.Status)
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .AsQueryable();
 
             if (!string.IsNullOrWhiteSpace(search))
@@ -53,7 +53,7 @@ namespace RequestForm.Services
         {
             var approvedQuery = _context.Requests
                 .Include(r => r.Status)
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .Include(r => r.RequestAssignments)
                 .Where(r =>
                     r.Status!.StatusName == "Approved by Manager" &&
@@ -61,7 +61,7 @@ namespace RequestForm.Services
 
             var assignedQuery = _context.Requests
                 .Include(r => r.Status)
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .Include(r => r.RequestAssignments)
                 .Where(r =>
                     r.RequestAssignments.Any(a => a.IsCurrent));
@@ -198,7 +198,7 @@ namespace RequestForm.Services
         public async Task<Request?> GetRequestForReview(int id)
         {
             return await _context.Requests
-                .Include(r => r.RequestType)
+                .Include(r => r.TicketType)
                 .Include(r => r.Status)
                 .FirstOrDefaultAsync(r =>
                     r.RequestId == id);

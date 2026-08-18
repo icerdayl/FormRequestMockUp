@@ -11,6 +11,7 @@ namespace RequestForm.Controllers
     public class RequestController : Controller
     {
         private readonly IRequestService _requestService;
+        private readonly IFeatureService _featureService;
         private readonly ApplicationDbContext _context;
         private readonly IWebHostEnvironment _env;
 
@@ -23,10 +24,12 @@ namespace RequestForm.Controllers
 
         public RequestController(
             IRequestService requestService,
+            IFeatureService featureService,
             ApplicationDbContext context,
             IWebHostEnvironment env)
         {
             _requestService = requestService;
+            _featureService = featureService;
             _context = context;
             _env = env;
         }
@@ -94,7 +97,8 @@ namespace RequestForm.Controllers
 
         public async Task<IActionResult> Create()
         {
-            ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
+            ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
+            ViewBag.Developers = FakeDevelopers.Developers;
 
             return View(new Request
             {
@@ -109,11 +113,15 @@ namespace RequestForm.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Request request, IFormFile? Attachment)
+        public async Task<IActionResult> Create(
+            Request request,
+            IFormFile? Attachment,
+            string? FeaturesJson)
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
+                ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
+                ViewBag.Developers = FakeDevelopers.Developers;
 
                 return View(request);
             }
@@ -125,7 +133,8 @@ namespace RequestForm.Controllers
                 if (!isValid)
                 {
                     ModelState.AddModelError("Attachment", error!);
-                    ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
+                    ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
+                    ViewBag.Developers = FakeDevelopers.Developers;
 
                     return View(request);
                 }
@@ -134,6 +143,35 @@ namespace RequestForm.Controllers
             }
 
             await _requestService.Create(request);
+
+            if (!string.IsNullOrWhiteSpace(FeaturesJson))
+            {
+                try
+                {
+                    var features = System.Text.Json.JsonSerializer.Deserialize<
+                        List<FeatureSubmissionDto>>(
+                            FeaturesJson,
+                            new System.Text.Json.JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
+
+                    if (features != null)
+                    {
+                        await _featureService.CreateBatchForRequest(
+                            request.RequestId,
+                            features);
+                    }
+                }
+                catch (System.Text.Json.JsonException)
+                {
+                    // Malformed JSON from the client — the Request
+                    // itself is already saved successfully, so we
+                    // don't fail the whole submission over this.
+                    // The requester can still add Features manually
+                    // afterward from the Request Details page.
+                }
+            }
 
             return RedirectToAction(nameof(MyRequests));
         }
@@ -205,9 +243,10 @@ namespace RequestForm.Controllers
             if (request == null)
                 return NotFound();
 
-            ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
+            ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
 
             return View(request);
+
         }
 
         [HttpPost]
@@ -216,7 +255,7 @@ namespace RequestForm.Controllers
         {
             if (!ModelState.IsValid)
             {
-                ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
+                ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
                 return View(request);
             }
 
@@ -229,7 +268,7 @@ namespace RequestForm.Controllers
                 if (!isValid)
                 {
                     ModelState.AddModelError("Attachment", error!);
-                    ViewBag.RequestTypes = await _context.RequestTypes.ToListAsync();
+                    ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
 
                     return View(request);
                 }
