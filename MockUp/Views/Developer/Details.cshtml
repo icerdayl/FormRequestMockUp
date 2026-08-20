@@ -1,87 +1,225 @@
-﻿@{
-    ViewData["Title"] = "Developer Task";
-}
+@model RequestForm.Models.Request
+@{
+    ViewData["Title"] = "Request Work";
+    var selected = ViewBag.SelectedDeveloper as string;
 
-@section Styles {
-    <link rel="stylesheet" href="~/css/developer.css" />
+    var allSubTasks = Model.Features.SelectMany(f => f.SubTasks).ToList();
+    var doneCount = allSubTasks.Count(s => s.Status == "Done");
+    var totalCount = allSubTasks.Count;
+    var percent = totalCount == 0 ? 0 : (int)Math.Round(100.0 * doneCount / totalCount);
 }
 
 <div class="container-fluid">
 
     <div class="card shadow">
 
-        <div class="card-header">
+        <div class="card-header d-flex justify-content-between align-items-center">
 
-            <h3>Company Website Redesign</h3>
+            <div>
+                <h3 class="mb-0">@Model.ReferenceNumber &middot; @Model.Title</h3>
+                <small class="text-muted">@Model.TicketType?.TicketTypeName</small>
+            </div>
+
+            <a asp-action="Index"
+               asp-route-developer="@selected"
+               class="btn btn-secondary">
+
+                Back to My Requests
+
+            </a>
 
         </div>
 
         <div class="card-body">
 
-            <div class="mb-4">
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">@TempData["Error"]</div>
+            }
 
-                <h5>Description</h5>
+            <div class="row mb-3">
 
-                <p>
-                    Redesign the company website with a modern responsive
-                    interface and updated branding.
-                </p>
+                <div class="col-md-4">
+                    <label class="fw-bold small">Status</label>
+                    <p>@Model.Status?.StatusName</p>
+                </div>
 
-            </div>
+                <div class="col-md-4">
+                    <label class="fw-bold small">Priority</label>
+                    <p>@Model.Priority</p>
+                </div>
 
-            <div class="mb-4">
-
-                <h5>Current Progress</h5>
-
-                <div class="progress">
-
-                    <div class="progress-bar"
-                         style="width:60%">
-                        60%
-                    </div>
-
+                <div class="col-md-4">
+                    <label class="fw-bold small">Due Date</label>
+                    <p>@Model.PreferredCompletionDate.ToString("MMMM dd, yyyy")</p>
                 </div>
 
             </div>
 
-            <div class="mb-4">
+            @if (totalCount > 0)
+            {
+                <div class="d-flex align-items-center gap-2 mb-4" style="max-width: 400px;">
 
-                <label class="form-label">
-                    Update Progress
-                </label>
+                    <div class="progress flex-grow-1" style="height: 10px;">
+                        <div class="progress-bar bg-success" style="width: @(percent)%;"></div>
+                    </div>
 
-                <select class="form-select">
+                    <small class="text-muted text-nowrap">
+                        @doneCount / @totalCount subtasks done (@percent%)
+                    </small>
 
-                    <option>0%</option>
-                    <option>25%</option>
-                    <option>50%</option>
-                    <option selected>60%</option>
-                    <option>75%</option>
-                    <option>100%</option>
+                </div>
+            }
 
-                </select>
+            @if (!Model.Features.Any())
+            {
+                <p class="text-muted">
+                    No features have been added to this request yet.
+                </p>
+            }
 
-            </div>
+            @foreach (var feature in Model.Features)
+            {
+                var featureDone = feature.SubTasks.Count(s => s.Status == "Done");
+                var featureTotal = feature.SubTasks.Count;
 
-            <div class="mb-4">
+                <div class="card mb-3">
 
-                <label class="form-label">
-                    Developer Remarks
-                </label>
+                    <div class="card-header">
 
-                <textarea class="form-control"
-                          rows="5"
-                          placeholder="Enter update..."></textarea>
+                        <h5 class="mb-0">@feature.Title</h5>
 
-            </div>
+                        @if (featureTotal > 0)
+                        {
+                            <small class="text-muted">@featureDone / @featureTotal done</small>
+                        }
 
-            <button class="btn btn-success">
-                Save Progress
-            </button>
+                    </div>
 
-            <button class="btn btn-primary">
-                Mark as Completed
-            </button>
+                    <div class="card-body">
+
+                        @if (!feature.SubTasks.Any())
+                        {
+                            <p class="text-muted small mb-0">No subtasks under this feature.</p>
+                        }
+                        else
+                        {
+                            @foreach (var subTask in feature.SubTasks.OrderBy(s => s.SortOrder))
+                            {
+                                var collapseId = $"subtask-{subTask.SubTaskId}";
+                                var badgeClass = subTask.Status switch
+                                {
+                                    "Done" => "bg-success",
+                                    "In Progress" => "bg-warning text-dark",
+                                    _ => "bg-secondary"
+                                };
+
+                                <div class="border rounded p-3 mb-2">
+
+                                    <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+
+                                        <div>
+
+                                            <span class="badge @badgeClass mb-1">@subTask.Status</span>
+
+                                            <div class="fw-semibold @(subTask.Status == "Done" ? "text-decoration-line-through text-muted" : "")">
+                                                @subTask.Title
+                                            </div>
+
+                                            <div class="text-muted small">
+                                                @(string.IsNullOrWhiteSpace(subTask.AssignedTo) ? "Unassigned" : subTask.AssignedTo)
+                                                &middot;
+                                                @(subTask.StartDate?.ToString("MMM dd") ?? "—") to @(subTask.DueDate?.ToString("MMM dd") ?? "—")
+                                                &middot;
+                                                @(subTask.EstimatedManDays?.ToString("0.##") ?? "—") man-days est.
+                                            </div>
+
+                                            @if (!string.IsNullOrWhiteSpace(subTask.CompletionRemarks))
+                                            {
+                                                <div class="text-muted small mt-1">
+                                                    <strong>Remarks:</strong> @subTask.CompletionRemarks
+                                                </div>
+                                            }
+
+                                            @if (!string.IsNullOrWhiteSpace(subTask.ResultAttachmentPath))
+                                            {
+                                                <div class="small mt-1">
+                                                    <a href="@subTask.ResultAttachmentPath" target="_blank">
+                                                        <i class="bi bi-paperclip"></i> View submitted result
+                                                    </a>
+                                                </div>
+                                            }
+
+                                        </div>
+
+                                        <button type="button"
+                                                class="btn btn-outline-primary btn-sm"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#@collapseId">
+
+                                            Update
+
+                                        </button>
+
+                                    </div>
+
+                                    <div class="collapse mt-3" id="@collapseId">
+
+                                        <form asp-action="UpdateSubTaskStatus"
+                                              method="post"
+                                              enctype="multipart/form-data"
+                                              class="row g-2 align-items-end">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden" name="subTaskId" value="@subTask.SubTaskId" />
+                                            <input type="hidden" name="requestId" value="@Model.RequestId" />
+                                            <input type="hidden" name="developer" value="@selected" />
+
+                                            <div class="col-md-3">
+                                                <label class="form-label small">Status</label>
+                                                <select name="status" class="form-select form-select-sm">
+                                                    <option value="Not Started" selected="@(subTask.Status == "Not Started")">Not Started</option>
+                                                    <option value="In Progress" selected="@(subTask.Status == "In Progress")">In Progress</option>
+                                                    <option value="Done" selected="@(subTask.Status == "Done")">Done</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <label class="form-label small">Actual Man-Days</label>
+                                                <input type="number" step="0.5" min="0" name="actualManDays"
+                                                       class="form-control form-control-sm"
+                                                       value="@subTask.ActualManDays" />
+                                            </div>
+
+                                            <div class="col-md-4">
+                                                <label class="form-label small">Result File (optional)</label>
+                                                <input type="file" name="ResultFile" class="form-control form-control-sm" />
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                    Save
+                                                </button>
+                                            </div>
+
+                                            <div class="col-12">
+                                                <label class="form-label small">Completion Remarks</label>
+                                                <textarea name="completionRemarks" class="form-control form-control-sm" rows="2">@subTask.CompletionRemarks</textarea>
+                                            </div>
+
+                                        </form>
+
+                                    </div>
+
+                                </div>
+                            }
+                        }
+
+                    </div>
+
+                </div>
+            }
 
         </div>
 

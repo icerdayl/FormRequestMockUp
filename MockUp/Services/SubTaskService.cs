@@ -77,7 +77,88 @@ namespace RequestForm.Services
 
             await _context.SaveChangesAsync();
 
+            await RecalculateRequestStatus(subTask.RequestId);
+
             return true;
+        }
+
+        public async Task<bool> UpdateStatus(
+            int subTaskId,
+            string status,
+            string? completionRemarks,
+            decimal? actualManDays,
+            string? resultAttachmentPath)
+        {
+            var subTask = await _context.SubTasks
+                .FirstOrDefaultAsync(s => s.SubTaskId == subTaskId);
+
+            if (subTask == null)
+                return false;
+
+            subTask.Status = status;
+
+            if (status == SubTaskStatuses.Done)
+            {
+                subTask.CompletedDate = DateTime.Now;
+
+                if (completionRemarks != null)
+                    subTask.CompletionRemarks = completionRemarks;
+
+                if (actualManDays.HasValue)
+                    subTask.ActualManDays = actualManDays;
+
+                if (!string.IsNullOrWhiteSpace(resultAttachmentPath))
+                    subTask.ResultAttachmentPath = resultAttachmentPath;
+            }
+            else
+            {
+                subTask.CompletedDate = null;
+            }
+
+            await _context.SaveChangesAsync();
+
+            await RecalculateRequestStatus(subTask.RequestId);
+
+            return true;
+        }
+
+        // Status IDs: 4 = "Approved by Manager", 6 = "In Progress",
+        // 7 = "Completed" (see ApplicationDbContext seed data).
+        // Only requests already at "Approved by Manager" or already
+        // auto-promoted to "In Progress" are managed here - a
+        // Request that's Pending, Rejected, or still earlier in
+        // approval is never touched by Subtask activity.
+        private async Task RecalculateRequestStatus(int requestId)
+        {
+            var request = await _context.Requests
+                .FirstOrDefaultAsync(r => r.RequestId == requestId);
+
+            if (request == null)
+                return;
+
+            if (request.StatusId != 4 && request.StatusId != 6)
+                return;
+
+            var subTasks = await _context.SubTasks
+                .Where(s => s.RequestId == requestId)
+                .ToListAsync();
+
+            if (subTasks.Count == 0)
+                return;
+
+            var allDone = subTasks.All(s => s.Status == SubTaskStatuses.Done);
+            var anyStarted = subTasks.Any(s => s.Status != SubTaskStatuses.NotStarted);
+
+            if (allDone)
+            {
+                request.StatusId = 7; // Completed
+            }
+            else if (anyStarted && request.StatusId == 4)
+            {
+                request.StatusId = 6; // In Progress
+            }
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task<bool> Delete(int subTaskId)

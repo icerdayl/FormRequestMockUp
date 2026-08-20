@@ -229,6 +229,11 @@ form.addEventListener("submit", function (e) {
         "Are you sure you want to submit this request?",
         function () {
 
+            if (window.RequestFeaturesBuilder &&
+                typeof RequestFeaturesBuilder.syncBeforeSubmit === "function") {
+                RequestFeaturesBuilder.syncBeforeSubmit();
+            }
+
             form.submit();
 
         });

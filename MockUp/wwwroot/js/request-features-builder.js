@@ -197,6 +197,16 @@ const RequestFeaturesBuilder = (function () {
             });
     }
 
+    // Public method - called from request-validation.js right
+    // before it does form.submit(), since calling .submit()
+    // programmatically does NOT fire the form's "submit" event,
+    // so a normal submit listener here would never run.
+    function syncBeforeSubmit() {
+        if (hiddenInput) {
+            hiddenInput.value = JSON.stringify(serialize());
+        }
+    }
+
     function syncFieldToState(target) {
 
         const fIndexRaw = target.dataset.featureIndex;
@@ -243,7 +253,6 @@ const RequestFeaturesBuilder = (function () {
         builderContainer = document.getElementById(options.builderContainerId);
         const addFeatureButton = document.getElementById(options.addFeatureButtonId);
         hiddenInput = document.getElementById(options.hiddenInputId);
-        const form = document.querySelector(options.formSelector);
         const templates = options.templates || {};
         developers = options.developers || [];
 
@@ -333,15 +342,9 @@ const RequestFeaturesBuilder = (function () {
 
         }
 
-        if (form) {
-            form.addEventListener("submit", function () {
-                hiddenInput.value = JSON.stringify(serialize());
-            });
-        }
-
         render();
     }
 
-    return { init: init };
+    return { init: init, syncBeforeSubmit: syncBeforeSubmit };
 
 })();
