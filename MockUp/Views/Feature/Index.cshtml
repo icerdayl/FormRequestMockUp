@@ -36,6 +36,15 @@
                 <div class="alert alert-danger">@TempData["Error"]</div>
             }
 
+            <div class="alert alert-secondary small">
+                <strong>Debug info</strong> — RequestId being queried:
+                <code>@request?.RequestId</code>
+                &middot; Features found for this request:
+                <code>@Model.Count</code>
+                &middot; Total Features in the whole database (any request):
+                <code>@ViewBag.TotalFeaturesInDb</code>
+            </div>
+
             @* ===========================
                EXISTING FEATURES
                =========================== *@

@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RequestForm.Data;
 using RequestForm.Interfaces;
 using RequestForm.Models;
@@ -51,6 +51,15 @@ namespace RequestForm.Services
 
             using var transaction = await _context.Database.BeginTransactionAsync();
 
+            var request = await _context.Requests
+                .FirstOrDefaultAsync(r => r.RequestId == requestId);
+
+            if (request == null)
+                throw new InvalidOperationException("Parent request not found.");
+
+            var today = DateTime.Today;
+            var latestSubTaskDueDate = (DateTime?)null;
+
             foreach (var featureDto in features)
             {
                 if (string.IsNullOrWhiteSpace(featureDto.Title))
@@ -81,15 +90,40 @@ namespace RequestForm.Services
                     if (string.IsNullOrWhiteSpace(subTaskDto.Title))
                         continue;
 
+                    if (!subTaskDto.StartDate.HasValue || !subTaskDto.DueDate.HasValue)
+                        throw new InvalidOperationException($"Subtask '{subTaskDto.Title}' must have both a start date and a due date.");
+
+                    if (subTaskDto.StartDate.Value.Date < today)
+                        throw new InvalidOperationException($"Subtask '{subTaskDto.Title}' cannot have a start date earlier than today.");
+
+                    if (subTaskDto.DueDate.Value.Date < today)
+                        throw new InvalidOperationException($"Subtask '{subTaskDto.Title}' cannot have a due date earlier than today.");
+
+                    if (subTaskDto.DueDate.Value.Date < subTaskDto.StartDate.Value.Date)
+                        throw new InvalidOperationException($"Subtask '{subTaskDto.Title}' cannot have a due date earlier than its start date.");
+
+                    if (request.StartDate.HasValue &&
+                        subTaskDto.StartDate.Value.Date < request.StartDate.Value.Date)
+                    {
+                        throw new InvalidOperationException($"Subtask '{subTaskDto.Title}' cannot start before the request start date.");
+                    }
+
+                    var manDays =
+                        (decimal)(subTaskDto.DueDate.Value.Date - subTaskDto.StartDate.Value.Date).TotalDays + 1m;
+
+                    latestSubTaskDueDate = !latestSubTaskDueDate.HasValue ||
+                                           subTaskDto.DueDate.Value.Date > latestSubTaskDueDate.Value
+                        ? subTaskDto.DueDate.Value.Date
+                        : latestSubTaskDueDate.Value;
+
                     _context.SubTasks.Add(new SubTask
                     {
                         FeatureId = feature.FeatureId,
                         RequestId = requestId,
                         Title = subTaskDto.Title,
-                        AssignedTo = subTaskDto.AssignedTo,
-                        StartDate = subTaskDto.StartDate,
-                        DueDate = subTaskDto.DueDate,
-                        EstimatedManDays = subTaskDto.EstimatedManDays,
+                        StartDate = subTaskDto.StartDate.Value.Date,
+                        DueDate = subTaskDto.DueDate.Value.Date,
+                        EstimatedManDays = manDays,
                         Status = SubTaskStatuses.NotStarted,
                         SortOrder = sortOrder
                     });
@@ -98,6 +132,13 @@ namespace RequestForm.Services
                 }
 
                 await _context.SaveChangesAsync();
+            }
+
+            if (latestSubTaskDueDate.HasValue &&
+                latestSubTaskDueDate.Value != request.PreferredCompletionDate.Date)
+            {
+                throw new InvalidOperationException(
+                    $"The request Completion Date must match the latest subtask due date ({latestSubTaskDueDate:MMMM dd, yyyy}).");
             }
 
             await transaction.CommitAsync();

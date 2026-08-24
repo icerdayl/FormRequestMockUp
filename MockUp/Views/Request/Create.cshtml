@@ -28,6 +28,10 @@
 
                 @Html.AntiForgeryToken()
 
+                <div asp-validation-summary="ModelOnly"
+                     class="alert alert-danger"
+                     role="alert"></div>
+
                 <div class="section-header">
 
                     <span class="section-number">
@@ -147,35 +151,6 @@
                         2
                     </span>
 
-                    <h5>Features & Subtasks</h5>
-
-                </div>
-
-                <p class="text-muted small mb-3" id="featuresHint">
-                    Select a Ticket Type above to see suggested features and subtasks for this
-                    kind of request. Everything here is optional and fully editable — edit,
-                    remove, or add your own before submitting.
-                </p>
-
-                <div id="featuresBuilder"></div>
-
-                <button type="button"
-                        id="addFeatureBtn"
-                        class="btn btn-outline-primary btn-sm mb-4">
-
-                    + Add Feature
-
-                </button>
-
-                <input type="hidden" id="FeaturesJson" name="FeaturesJson" />
-
-                <hr>
-                <div class="section-header">
-
-                    <span class="section-number">
-                        3
-                    </span>
-
                     <h5>Project Details</h5>
 
                 </div>
@@ -254,6 +229,17 @@
 
                 <div class="row">
 
+                    <div class="col-12">
+
+                        <span id="subtaskRangeError" class="text-danger d-block mb-2"></span>
+                        <span id="completionMatchError" class="text-danger d-block mb-2"></span>
+
+                    </div>
+
+                </div>
+
+                <div class="row">
+
                     <div class="col-md-6">
 
                         <label class="form-label">
@@ -286,6 +272,36 @@
                     </div>
 
                 </div>
+                <div class="section-header">
+
+                    <span class="section-number">
+                        3
+                    </span>
+
+                    <h5>Features & Subtasks</h5>
+
+                </div>
+
+                <p class="text-muted small mb-3" id="featuresHint">
+                    Select a Ticket Type above to see suggested features and subtasks for this
+                    kind of request. Everything here is optional and fully editable — edit,
+                    remove, or add your own before submitting.
+                </p>
+
+                <div id="featuresBuilder"></div>
+
+                <button type="button"
+                        id="addFeatureBtn"
+                        class="btn btn-outline-primary btn-sm mb-4">
+
+                    + Add Feature
+
+                </button>
+
+                <input type="hidden" id="FeaturesJson" name="FeaturesJson" />
+
+                <hr>
+                
 
                 <div class="text-end mt-5">
 
@@ -320,8 +336,8 @@
 
 @section Scripts{
 
-    <script src="~/js/request-validation.js"></script>
-    <script src="~/js/request-features-builder.js"></script>
+    <script src="~/js/request-features-builder.js" asp-append-version="true"></script>
+    <script src="~/js/request-validation.js" asp-append-version="true"></script>
 
     <script>
 
@@ -330,9 +346,8 @@
             builderContainerId: "featuresBuilder",
             addFeatureButtonId: "addFeatureBtn",
             hiddenInputId: "FeaturesJson",
-            formSelector: "form",
             templates: @Html.Raw(Json.Serialize(RequestForm.Models.TicketTypeFeatureTemplates.Templates)),
-            developers: @Html.Raw(Json.Serialize(ViewBag.Developers))
+            initialFeatures: @Html.Raw(Json.Serialize(ViewBag.InitialFeatures ?? new List<RequestForm.Models.FeatureSubmissionDto>()))
         });
 
     </script>

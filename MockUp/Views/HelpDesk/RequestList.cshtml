@@ -112,8 +112,7 @@
 
 </div>
 
-<partial name="_ApprovalModal"
-         model="@("HelpDesk")" />
+<partial name="_ApprovalModal" model="@("HelpDesk")" />
 
 @section Scripts {
 
@@ -148,61 +147,6 @@
 
                 const params =
                     new URLSearchParams();
-
-                tableContainer.addEventListener("click", function(event) {
-
-                    const button =
-                        event.target.closest(".approval-btn");
-
-                    if (!button)
-                        return;
-
-                    const requestId =
-                        button.dataset.id;
-
-                    const action =
-                        button.dataset.action;
-
-                    const requestIdInput =
-                        document.getElementById("approvalRequestId");
-
-                    const decisionInput =
-                        document.getElementById("approvalDecision");
-
-                    const message =
-                        document.getElementById("approvalMessage");
-
-                    const confirmButton =
-                        document.getElementById("approvalConfirmButton");
-
-                    requestIdInput.value = requestId;
-                    decisionInput.value = action;
-
-                    if (action === "Approved") {
-
-                        message.textContent =
-                            "Are you sure you want to approve this request?";
-
-                        confirmButton.textContent =
-                            "Approve";
-
-                        confirmButton.className =
-                            "btn btn-success";
-
-                    }
-                    else {
-
-                        message.textContent =
-                            "Are you sure you want to reject this request?";
-
-                        confirmButton.textContent =
-                            "Reject";
-
-                        confirmButton.className =
-                            "btn btn-danger";
-                    }
-
-                });
 
                 if (search.trim() !== "") {
                     params.append("search", search);

@@ -1,4 +1,4 @@
-﻿function countWords(text) {
+function countWords(text) {
 
     return text
         .trim()
@@ -206,6 +206,37 @@ form.addEventListener("submit", function (e) {
         dateOrderError.textContent = "";
     }
 
+    const today = new Date();
+    const todayString = [
+        today.getFullYear(),
+        String(today.getMonth() + 1).padStart(2, "0"),
+        String(today.getDate()).padStart(2, "0")
+    ].join("-");
+
+    if (startDateInput && startDateInput.value &&
+        startDateInput.value < todayString) {
+
+        if (dateOrderError) {
+            dateOrderError.textContent =
+                "Start date cannot be earlier than today.";
+        }
+
+        valid = false;
+
+    }
+
+    if (dueDateInput && dueDateInput.value &&
+        dueDateInput.value < todayString) {
+
+        if (dateOrderError) {
+            dateOrderError.textContent =
+                "Completion date cannot be earlier than today.";
+        }
+
+        valid = false;
+
+    }
+
     if (startDateInput && dueDateInput &&
         startDateInput.value && dueDateInput.value &&
         dueDateInput.value < startDateInput.value) {
@@ -222,6 +253,63 @@ form.addEventListener("submit", function (e) {
     if (!valid) {
 
         return;
+
+    }
+
+    let subtaskRangeError = document.getElementById("subtaskRangeError");
+
+    if (subtaskRangeError) {
+        subtaskRangeError.textContent = "";
+    }
+
+    let completionMatchError = document.getElementById("completionMatchError");
+
+    if (completionMatchError) {
+        completionMatchError.textContent = "";
+    }
+
+    if (window.RequestFeaturesBuilder &&
+        typeof RequestFeaturesBuilder.getDateRangeViolations === "function" &&
+        startDateInput && dueDateInput &&
+        startDateInput.value && dueDateInput.value) {
+
+        const violations = RequestFeaturesBuilder.getDateRangeViolations(
+            startDateInput.value, dueDateInput.value);
+
+        if (violations.length > 0) {
+
+            if (subtaskRangeError) {
+                subtaskRangeError.textContent =
+                    "Some subtasks fall outside the request's own Start/Due Date window: " +
+                    violations.join(" ");
+            }
+
+            return;
+
+        }
+
+        if (window.RequestFeaturesBuilder &&
+            typeof RequestFeaturesBuilder.getLatestSubtaskDueDate === "function" &&
+            dueDateInput &&
+            dueDateInput.value) {
+
+            const latestSubtaskDueDate =
+                RequestFeaturesBuilder.getLatestSubtaskDueDate();
+
+            if (latestSubtaskDueDate &&
+                latestSubtaskDueDate !== dueDateInput.value) {
+
+                if (completionMatchError) {
+                    completionMatchError.textContent =
+                        "The request Completion Date must match the latest subtask due date (" +
+                        latestSubtaskDueDate + ").";
+                }
+
+                return;
+
+            }
+
+        }
 
     }
 

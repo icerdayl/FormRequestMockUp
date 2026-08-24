@@ -25,8 +25,6 @@ namespace RequestForm.Models
         [MaxLength(20)]
         public string Status { get; set; } = SubTaskStatuses.NotStarted;
 
-        public string? AssignedTo { get; set; }
-
         public DateTime? StartDate { get; set; }
 
         public DateTime? DueDate { get; set; }

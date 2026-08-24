@@ -21,6 +21,7 @@
                     <th>Ticket Type</th>
                     <th>Date Submitted</th>
                     <th>Status</th>
+                    <th>Features</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -70,21 +71,38 @@
                             </td>
 
                             <td>
+                                @{
+                                    var subTaskCount = item.Features.SelectMany(f => f.SubTasks).Count();
+                                }
+                                @if (item.Features.Any())
+                                {
+                                    <span class="badge bg-light text-dark border">
+                                        @item.Features.Count feature(s), @subTaskCount subtask(s)
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="text-muted small">None added</span>
+                                }
+                            </td>
+
+                            <td>
 
                                 <div class="d-flex gap-2">
 
-                                    <!-- VIEW -->
+                                    <!-- REVIEW: full detail page, shows Features & Subtasks
+                                         before deciding -->
 
                                     <a asp-action="Review"
                                        asp-route-id="@item.RequestId"
                                        class="btn btn-info btn-sm">
 
-                                        View
+                                        Review
 
                                     </a>
 
-
-                                    <!-- APPROVE -->
+                                    <!-- Quick approve/reject, same as Review's decision but
+                                         without leaving the list -->
 
                                     <button type="button"
                                             class="btn btn-success btn-sm approval-btn"
@@ -92,7 +110,9 @@
                                             data-action="Approved"
                                             data-bs-toggle="modal"
                                             data-bs-target="#approvalModal">
+
                                         Approve
+
                                     </button>
 
                                     <button type="button"
@@ -101,7 +121,9 @@
                                             data-action="Rejected"
                                             data-bs-toggle="modal"
                                             data-bs-target="#approvalModal">
+
                                         Reject
+
                                     </button>
 
                                 </div>
@@ -115,7 +137,7 @@
                 {
                     <tr>
 
-                        <td colspan="6"
+                        <td colspan="7"
                             class="text-center text-muted py-4">
 
                             No requests awaiting approval.
@@ -129,8 +151,8 @@
 
         </table>
 
-        <partial name="_ApprovalModal" model="@("Manager")" />
-
     </div>
 
 </div>
+
+<partial name="_ApprovalModal" model="@("Manager")" />

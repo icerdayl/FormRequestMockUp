@@ -22,8 +22,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    const buttons = document.querySelectorAll(".approval-btn");
-
     const requestIdInput = document.getElementById("approvalRequestId");
     const decisionInput = document.getElementById("approvalDecision");
     const message = document.getElementById("approvalMessage");
@@ -33,42 +31,48 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    buttons.forEach(function (button) {
+    // Event delegation on document, not per-button listeners -
+    // HelpDesk's list page replaces the table (and its buttons) via
+    // AJAX after searching/filtering, so listeners attached directly
+    // to the original buttons would stop working after any refresh.
+    document.addEventListener("click", function (e) {
 
-        button.addEventListener("click", function () {
+        const button = e.target.closest(".approval-btn");
 
-            const requestId = this.dataset.id;
-            const decision = this.dataset.action;
+        if (!button) {
+            return;
+        }
 
-            requestIdInput.value = requestId;
-            decisionInput.value = decision;
+        const requestId = button.dataset.id;
+        const decision = button.dataset.action;
 
-            if (message) {
+        requestIdInput.value = requestId;
+        decisionInput.value = decision;
 
-                message.textContent =
-                    "Are you sure you want to " +
-                    decision.toLowerCase() +
-                    " this request?";
+        if (message) {
+
+            message.textContent =
+                "Are you sure you want to " +
+                decision.toLowerCase() +
+                " this request?";
+
+        }
+
+        if (confirmButton) {
+
+            if (decision === "Approved") {
+
+                confirmButton.textContent = "Approve";
+                confirmButton.className = "btn btn-success";
+
+            } else {
+
+                confirmButton.textContent = "Reject";
+                confirmButton.className = "btn btn-danger";
 
             }
 
-            if (confirmButton) {
-
-                if (decision === "Approved") {
-
-                    confirmButton.textContent = "Approve";
-                    confirmButton.className = "btn btn-success";
-
-                } else {
-
-                    confirmButton.textContent = "Reject";
-                    confirmButton.className = "btn btn-danger";
-
-                }
-
-            }
-
-        });
+        }
 
     });
 

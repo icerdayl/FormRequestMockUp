@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RequestForm.Data;
 using RequestForm.Interfaces;
 using RequestForm.Models.ViewModels;
@@ -85,12 +85,17 @@ namespace RequestForm.Services
 
 
             // ==========================================
-            // GANTT CHART (grouped by assigned developer)
+            // GANTT CHART (one bar per subtask, grouped by the
+            // developer assigned to the request by Help Desk -
+            // this is what makes man-days actually segment on the chart
+            // without allowing per-subtask developer assignment)
             // ==========================================
 
             var scheduledRequests = await _context.Requests
                 .Include(x => x.Status)
                 .Include(x => x.RequestAssignments)
+                .Include(x => x.Features)
+                    .ThenInclude(f => f.SubTasks)
                 .Where(x =>
                     x.StartDate.HasValue &&
                     ( 
@@ -100,19 +105,53 @@ namespace RequestForm.Services
                     ))
                 .ToListAsync();
 
-            dashboard.GanttByDeveloper = scheduledRequests
-                .GroupBy(x =>
+            var ganttBars = new List<(string Developer, GanttBarItem Bar)>();
+
+            foreach (var request in scheduledRequests)
+            {
+                var allSubTasks = request.Features
+                    .SelectMany(f => f.SubTasks.Select(s => (Feature: f, SubTask: s)))
+                    .Where(x => x.SubTask.StartDate.HasValue && x.SubTask.DueDate.HasValue)
+                    .ToList();
+
+                if (allSubTasks.Any())
                 {
-                    var current = x.RequestAssignments
+                    var currentAssignment = request.RequestAssignments
                         .FirstOrDefault(a => a.IsCurrent);
 
-                    return current?.AssignedTo ?? "Unassigned";
-                })
+                    foreach (var (feature, subTask) in allSubTasks)
+                    {
+                        ganttBars.Add((
+                            currentAssignment?.AssignedTo ?? "Unassigned",
+                            new GanttBarItem
+                            {
+                                RequestId = request.RequestId,
+                                ReferenceNumber = request.ReferenceNumber,
+                                RequestTitle = request.Title,
+                                FeatureTitle = feature.Title,
+                                SubTaskTitle = subTask.Title,
+                                Start = subTask.StartDate!.Value,
+                                End = subTask.DueDate!.Value,
+                                ManDays = subTask.EstimatedManDays,
+                                Priority = request.Priority,
+                                Status = subTask.Status
+                            }));
+                    }
+                }
+                // No subtask fallback: the Gantt is intentionally
+                // segmented only by actual subtasks and their man-days.
+                // Requests with no dated subtasks remain absent until
+                // their subtasks are scheduled.
+
+            }
+
+            dashboard.GanttByDeveloper = ganttBars
+                .GroupBy(x => x.Developer)
                 .OrderBy(g => g.Key == "Unassigned" ? 1 : 0)
                 .ThenBy(g => g.Key)
                 .ToDictionary(
                     g => g.Key,
-                    g => g.OrderBy(x => x.StartDate).ToList());
+                    g => g.Select(x => x.Bar).OrderBy(b => b.Start).ToList());
 
             dashboard.StatusBreakdown = await _context.Requests
                 .Include(x => x.Status)

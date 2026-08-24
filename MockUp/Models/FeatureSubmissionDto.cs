@@ -17,8 +17,6 @@ namespace RequestForm.Models
     {
         public string Title { get; set; } = string.Empty;
 
-        public string? AssignedTo { get; set; }
-
         public DateTime? StartDate { get; set; }
 
         public DateTime? DueDate { get; set; }

@@ -45,6 +45,8 @@ namespace RequestForm.Controllers
             ViewBag.Developers = developers;
             ViewBag.SelectedDeveloper = selected;
 
+            // Help Desk assigns the whole request. Subtasks no longer
+            // carry their own developer assignment.
             var requestIds = await _context.RequestAssignments
                 .Where(a => a.AssignedTo == selected && a.IsCurrent)
                 .Select(a => a.RequestId)
@@ -70,6 +72,7 @@ namespace RequestForm.Controllers
             var request = await _context.Requests
                 .Include(r => r.Status)
                 .Include(r => r.TicketType)
+                .Include(r => r.RequestAssignments)
                 .Include(r => r.Features)
                     .ThenInclude(f => f.SubTasks)
                 .FirstOrDefaultAsync(r => r.RequestId == id);

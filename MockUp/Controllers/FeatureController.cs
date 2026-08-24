@@ -32,6 +32,7 @@ namespace RequestForm.Controllers
 
             ViewBag.Request = request;
             ViewBag.CommonFeatures = CommonFeatures.Templates;
+            ViewBag.TotalFeaturesInDb = await _context.Features.CountAsync();
 
             var features = await _featureService.GetByRequestId(requestId);
 

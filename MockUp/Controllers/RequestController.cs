@@ -98,8 +98,6 @@ namespace RequestForm.Controllers
         public async Task<IActionResult> Create()
         {
             ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
-            ViewBag.Developers = FakeDevelopers.Developers;
-
             return View(new Request
             {
                 StartDate = DateTime.Today,
@@ -118,11 +116,137 @@ namespace RequestForm.Controllers
             IFormFile? Attachment,
             string? FeaturesJson)
         {
+            var today = DateTime.Today;
+
+            // Request-level date validation must happen on the server too.
+            if (!request.StartDate.HasValue)
+            {
+                ModelState.AddModelError(
+                    nameof(request.StartDate),
+                    "Start date is required.");
+            }
+            else if (request.StartDate.Value.Date < today)
+            {
+                ModelState.AddModelError(
+                    nameof(request.StartDate),
+                    "Start date cannot be earlier than today.");
+            }
+
+            if (request.PreferredCompletionDate.Date < today)
+            {
+                ModelState.AddModelError(
+                    nameof(request.PreferredCompletionDate),
+                    "Completion date cannot be earlier than today.");
+            }
+
+            if (request.StartDate.HasValue &&
+                request.PreferredCompletionDate.Date < request.StartDate.Value.Date)
+            {
+                ModelState.AddModelError(
+                    nameof(request.PreferredCompletionDate),
+                    "Completion date cannot be earlier than the start date.");
+            }
+
+            List<FeatureSubmissionDto>? features = null;
+
+            // Parse and validate Features/Subtasks BEFORE creating the Request.
+            // This prevents an invalid subtask date from creating a partial request.
+            if (!string.IsNullOrWhiteSpace(FeaturesJson))
+            {
+                try
+                {
+                    features = System.Text.Json.JsonSerializer.Deserialize<
+                        List<FeatureSubmissionDto>>(
+                            FeaturesJson,
+                            new System.Text.Json.JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
+
+                    if (features != null)
+                    {
+                        var subTaskDueDates = new List<DateTime>();
+
+                        foreach (var feature in features)
+                        {
+                            foreach (var subTask in feature.SubTasks)
+                            {
+                                if (string.IsNullOrWhiteSpace(subTask.Title))
+                                    continue;
+
+                                // Every actual subtask needs both dates so its
+                                // man-days can be calculated automatically.
+                                if (!subTask.StartDate.HasValue || !subTask.DueDate.HasValue)
+                                {
+                                    ModelState.AddModelError(
+                                        "",
+                                        $"Subtask '{subTask.Title}' must have both a start date and a due date.");
+                                    continue;
+                                }
+
+                                if (subTask.StartDate.Value.Date < today)
+                                {
+                                    ModelState.AddModelError(
+                                        "",
+                                        $"Subtask '{subTask.Title}' cannot have a start date earlier than today.");
+                                }
+
+                                if (subTask.DueDate.Value.Date < today)
+                                {
+                                    ModelState.AddModelError(
+                                        "",
+                                        $"Subtask '{subTask.Title}' cannot have a due date earlier than today.");
+                                }
+
+                                if (subTask.DueDate.Value.Date < subTask.StartDate.Value.Date)
+                                {
+                                    ModelState.AddModelError(
+                                        "",
+                                        $"Subtask '{subTask.Title}' cannot have a due date earlier than its start date.");
+                                }
+
+                                if (request.StartDate.HasValue &&
+                                    subTask.StartDate.Value.Date < request.StartDate.Value.Date)
+                                {
+                                    ModelState.AddModelError(
+                                        "",
+                                        $"Subtask '{subTask.Title}' cannot start before the request start date.");
+                                }
+
+                                subTaskDueDates.Add(subTask.DueDate.Value.Date);
+
+                                // Man-days are calculated from the date range on the
+                                // server; ignore any client-supplied value.
+                                subTask.EstimatedManDays =
+                                    (decimal)(subTask.DueDate.Value.Date - subTask.StartDate.Value.Date).TotalDays + 1m;
+                            }
+                        }
+
+                        if (subTaskDueDates.Count > 0)
+                        {
+                            var latestSubTaskDueDate = subTaskDueDates.Max();
+
+                            if (latestSubTaskDueDate != request.PreferredCompletionDate.Date)
+                            {
+                                ModelState.AddModelError(
+                                    nameof(request.PreferredCompletionDate),
+                                    $"The request Completion Date must match the latest subtask due date ({latestSubTaskDueDate:MMMM dd, yyyy}).");
+                            }
+                        }
+                    }
+                }
+                catch (System.Text.Json.JsonException)
+                {
+                    ModelState.AddModelError(
+                        "",
+                        "The Features & Subtasks data is invalid. Please review the selected features and try again.");
+                }
+            }
+
             if (!ModelState.IsValid)
             {
                 ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
-                ViewBag.Developers = FakeDevelopers.Developers;
-
+                ViewBag.InitialFeatures = features;
                 return View(request);
             }
 
@@ -134,8 +258,7 @@ namespace RequestForm.Controllers
                 {
                     ModelState.AddModelError("Attachment", error!);
                     ViewBag.TicketTypes = await _context.TicketTypes.ToListAsync();
-                    ViewBag.Developers = FakeDevelopers.Developers;
-
+                    ViewBag.InitialFeatures = features;
                     return View(request);
                 }
 
@@ -144,32 +267,23 @@ namespace RequestForm.Controllers
 
             await _requestService.Create(request);
 
-            if (!string.IsNullOrWhiteSpace(FeaturesJson))
+            if (features != null && features.Count > 0)
             {
                 try
                 {
-                    var features = System.Text.Json.JsonSerializer.Deserialize<
-                        List<FeatureSubmissionDto>>(
-                            FeaturesJson,
-                            new System.Text.Json.JsonSerializerOptions
-                            {
-                                PropertyNameCaseInsensitive = true
-                            });
+                    await _featureService.CreateBatchForRequest(
+                        request.RequestId,
+                        features);
 
-                    if (features != null)
-                    {
-                        await _featureService.CreateBatchForRequest(
-                            request.RequestId,
-                            features);
-                    }
+                    TempData["FeaturesSuccess"] =
+                        $"Request created with {features.Count} feature(s).";
                 }
-                catch (System.Text.Json.JsonException)
+                catch (Exception ex)
                 {
-                    // Malformed JSON from the client — the Request
-                    // itself is already saved successfully, so we
-                    // don't fail the whole submission over this.
-                    // The requester can still add Features manually
-                    // afterward from the Request Details page.
+                    TempData["FeaturesWarning"] =
+                        "Request saved, but saving the Features & Subtasks failed: " +
+                        ex.Message +
+                        " You can add them manually from the Request Details page.";
                 }
             }
 

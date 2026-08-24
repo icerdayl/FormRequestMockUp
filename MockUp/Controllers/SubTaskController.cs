@@ -28,8 +28,6 @@ namespace RequestForm.Controllers
                 return NotFound();
 
             ViewBag.Feature = feature;
-            ViewBag.Developers = FakeDevelopers.Developers;
-
             var subTasks = await _subTaskService.GetByFeatureId(featureId);
 
             return View(subTasks);
@@ -51,11 +49,51 @@ namespace RequestForm.Controllers
                     new { featureId = subTask.FeatureId });
             }
 
-            await _subTaskService.Create(subTask);
+            try
+            {
+                await _subTaskService.Create(subTask);
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
 
             return RedirectToAction(
                 nameof(Index),
                 new { featureId = subTask.FeatureId });
+        }
+
+        // ===========================
+        // EDIT
+        // ===========================
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(
+            int id,
+            int featureId,
+            string title,
+            DateTime? startDate,
+            DateTime? dueDate,
+            decimal? estimatedManDays)
+        {
+            if (string.IsNullOrWhiteSpace(title))
+            {
+                TempData["Error"] = "Title is required.";
+
+                return RedirectToAction(nameof(Index), new { featureId });
+            }
+
+            try
+            {
+                await _subTaskService.Update(
+                    id, title, startDate, dueDate, estimatedManDays);
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
+
+            return RedirectToAction(nameof(Index), new { featureId });
         }
 
         // ===========================

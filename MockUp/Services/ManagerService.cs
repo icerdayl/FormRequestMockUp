@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using RequestForm.Data;
 using RequestForm.Interfaces;
 using RequestForm.Models;
@@ -24,6 +24,8 @@ namespace RequestForm.Services
             var query = _context.Requests
                 .Include(r => r.TicketType)
                 .Include(r => r.Status)
+                .Include(r => r.Features)
+                    .ThenInclude(f => f.SubTasks)
                 .Where(r => r.Status!.StatusName == "Approved by Supervisor")
                 .AsQueryable();
 
@@ -49,6 +51,8 @@ namespace RequestForm.Services
             return await _context.Requests
                 .Include(r => r.TicketType)
                 .Include(r => r.Status)
+                .Include(r => r.Features)
+                    .ThenInclude(f => f.SubTasks)
                 .FirstOrDefaultAsync(r =>
                     r.RequestId == id);
         }

@@ -455,7 +455,7 @@
 
             <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
 
-                <h5 class="mb-0">Gantt Chart — by Developer</h5>
+                <h5 class="mb-0">Gantt Chart — by Developer & Subtask</h5>
 
                 @if (Model.GanttByDeveloper.Any())
                 {
@@ -550,22 +550,24 @@
                     Model.GanttByDeveloper.Select((g, groupIndex) => new
                     {
                         containerId = "gantt-dev-" + groupIndex,
-                        tasks = g.Value.Select(r => new
+                        tasks = g.Value.Select((b, barIndex) => new
                         {
-                            id = "req-" + r.RequestId,
-                                name = r.ReferenceNumber + " - " + r.Title,
-                                start = (r.StartDate ?? r.PreferredCompletionDate).ToString("yyyy-MM-dd"),
-                                end = (r.PreferredCompletionDate < (r.StartDate ?? r.PreferredCompletionDate)
-                                ? (r.StartDate ?? r.PreferredCompletionDate)
-                                : r.PreferredCompletionDate).ToString("yyyy-MM-dd"),
-                                progress = r.Status!.StatusName == "Completed" ? 100 :
-                                     r.Status!.StatusName == "In Progress" ? 50 : 0,
-                                custom_class = r.Priority == "High" ? "gantt-priority-high" :
-                                     r.Priority == "Medium" ? "gantt-priority-medium" :
-                                                                                                                                "gantt-priority-low"
-                                })
-                         })
-                    ));
+                            id = "bar-" + groupIndex + "-" + barIndex,
+                            name = b.ReferenceNumber + " - " +
+                                (b.SubTaskTitle != null
+                                    ? b.FeatureTitle + ": " + b.SubTaskTitle
+                                    : b.RequestTitle) +
+                                (b.ManDays.HasValue ? " (" + b.ManDays.Value.ToString("0.##") + " MD)" : ""),
+                            start = b.Start.ToString("yyyy-MM-dd"),
+                            end = (b.End < b.Start ? b.Start : b.End).ToString("yyyy-MM-dd"),
+                            progress = b.Status == "Completed" || b.Status == "Done" ? 100 :
+                                 b.Status == "In Progress" ? 50 : 0,
+                            custom_class = b.Priority == "High" ? "gantt-priority-high" :
+                                 b.Priority == "Medium" ? "gantt-priority-medium" :
+                                                                                            "gantt-priority-low"
+                        })
+                    })
+                ));
 
                 const instances = [];
 

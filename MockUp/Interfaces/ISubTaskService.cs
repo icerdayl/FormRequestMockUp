@@ -12,6 +12,16 @@ namespace RequestForm.Interfaces
 
         Task<bool> ToggleDone(int subTaskId);
 
+        // Basic field edits (title, dates, man-days) -
+        // distinct from UpdateStatus, which handles status changes
+        // and completion capture during developer work.
+        Task<bool> Update(
+            int subTaskId,
+            string title,
+            DateTime? startDate,
+            DateTime? dueDate,
+            decimal? estimatedManDays);
+
         // Full 3-state status update used by the Developer workflow
         // page — also re-evaluates and auto-updates the parent
         // Request's status (Approved -> In Progress -> Completed)

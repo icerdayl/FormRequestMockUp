@@ -2,6 +2,7 @@
 @{
     ViewData["Title"] = "Request Work";
     var selected = ViewBag.SelectedDeveloper as string;
+    var currentAssignment = Model.RequestAssignments.FirstOrDefault(a => a.IsCurrent);
 
     var allSubTasks = Model.Features.SelectMany(f => f.SubTasks).ToList();
     var doneCount = allSubTasks.Count(s => s.Status == "Done");
@@ -127,7 +128,7 @@
                                             </div>
 
                                             <div class="text-muted small">
-                                                @(string.IsNullOrWhiteSpace(subTask.AssignedTo) ? "Unassigned" : subTask.AssignedTo)
+                                                @(string.IsNullOrWhiteSpace(currentAssignment?.AssignedTo) ? "Unassigned" : currentAssignment.AssignedTo)
                                                 &middot;
                                                 @(subTask.StartDate?.ToString("MMM dd") ?? "—") to @(subTask.DueDate?.ToString("MMM dd") ?? "—")
                                                 &middot;

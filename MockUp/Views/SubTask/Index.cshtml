@@ -1,9 +1,13 @@
-﻿@model List<RequestForm.Models.SubTask>
+@model List<RequestForm.Models.SubTask>
 @{
     ViewData["Title"] = "Subtasks";
     var feature = ViewBag.Feature as RequestForm.Models.Feature;
-    var developers = ViewBag.Developers as List<string>;
-
+    var requestStartDate = feature?.Request?.StartDate?.Date;
+    var effectiveMinDate = requestStartDate.HasValue && requestStartDate.Value > DateTime.Today
+        ? requestStartDate.Value
+        : DateTime.Today;
+    var subtaskMinDate = effectiveMinDate.ToString("yyyy-MM-dd");
+    var requestDueDate = feature?.Request?.PreferredCompletionDate.ToString("yyyy-MM-dd");
     var doneCount = Model.Count(s => s.Status == "Done");
     var totalCount = Model.Count;
     var percent = totalCount == 0 ? 0 : (int)Math.Round(100.0 * doneCount / totalCount);
@@ -70,7 +74,6 @@
                             <tr>
                                 <th style="width: 40px;"></th>
                                 <th>Subtask</th>
-                                <th>Assigned To</th>
                                 <th>Start Date</th>
                                 <th>Due Date</th>
                                 <th>Man-Days</th>
@@ -83,6 +86,7 @@
                             @foreach (var subTask in Model)
                             {
                                 var isDone = subTask.Status == "Done";
+                                var editRowId = $"edit-subtask-{subTask.SubTaskId}";
 
                                 <tr class="@(isDone ? "table-light" : "")">
 
@@ -112,10 +116,6 @@
                                     </td>
 
                                     <td>
-                                        @(string.IsNullOrWhiteSpace(subTask.AssignedTo) ? "Unassigned" : subTask.AssignedTo)
-                                    </td>
-
-                                    <td>
                                         @(subTask.StartDate?.ToString("MMM dd, yyyy") ?? "—")
                                     </td>
 
@@ -127,10 +127,19 @@
                                         @(subTask.EstimatedManDays?.ToString("0.##") ?? "—")
                                     </td>
 
-                                    <td>
+                                    <td class="text-nowrap">
+
+                                        <button type="button"
+                                                class="btn btn-outline-secondary btn-sm"
+                                                data-bs-toggle="collapse"
+                                                data-bs-target="#@editRowId"
+                                                title="Edit">
+                                            <i class="bi bi-pencil"></i>
+                                        </button>
 
                                         <form asp-action="Delete"
                                               method="post"
+                                              class="d-inline"
                                               onsubmit="return confirm('Delete this subtask?');">
 
                                             @Html.AntiForgeryToken()
@@ -138,9 +147,60 @@
                                             <input type="hidden" name="id" value="@subTask.SubTaskId" />
                                             <input type="hidden" name="featureId" value="@feature?.FeatureId" />
 
-                                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <button type="submit" class="btn btn-outline-danger btn-sm" title="Delete">
                                                 <i class="bi bi-trash"></i>
                                             </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+
+                                <tr class="collapse" id="@editRowId">
+
+                                    <td colspan="6" class="bg-light">
+
+                                        <form asp-action="Edit" method="post" class="row g-2 align-items-end py-2">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden" name="id" value="@subTask.SubTaskId" />
+                                            <input type="hidden" name="featureId" value="@feature?.FeatureId" />
+
+                                            <div class="col-md-3">
+                                                <label class="form-label small">Title</label>
+                                                <input type="text" name="title" class="form-control form-control-sm"
+                                                       value="@subTask.Title" required />
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <label class="form-label small">Start Date</label>
+                                                <input type="date" name="startDate" class="form-control form-control-sm auto-mandays-start"
+                                                       min="@subtaskMinDate"
+                                                       max="@requestDueDate"
+                                                       value="@subTask.StartDate?.ToString("yyyy-MM-dd")" />
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <label class="form-label small">Due Date</label>
+                                                <input type="date" name="dueDate" class="form-control form-control-sm auto-mandays-due"
+                                                       min="@subtaskMinDate"
+                                                       max="@requestDueDate"
+                                                       value="@subTask.DueDate?.ToString("yyyy-MM-dd")" />
+                                            </div>
+
+                                            <div class="col-md-2">
+                                                <label class="form-label small">Man-Days (Auto)</label>
+                                                <input type="text" name="estimatedManDays" class="form-control form-control-sm auto-mandays-target"
+                                                       value="@(subTask.EstimatedManDays?.ToString("0.##") ?? "")" readonly />
+                                            </div>
+
+                                            <div class="col-md-1">
+                                                <button type="submit" class="btn btn-primary btn-sm w-100">
+                                                    Save
+                                                </button>
+                                            </div>
 
                                         </form>
 
@@ -184,32 +244,22 @@
                 </div>
 
                 <div class="col-md-2">
-                    <label class="form-label">Assigned To</label>
-                    <select name="AssignedTo" class="form-select">
-                        <option value="">Unassigned</option>
-                        @if (developers != null)
-                        {
-                            @foreach (var dev in developers)
-                            {
-                                <option value="@dev">@dev</option>
-                            }
-                        }
-                    </select>
-                </div>
-
-                <div class="col-md-2">
                     <label class="form-label">Start Date</label>
-                    <input type="date" name="StartDate" class="form-control" />
+                    <input type="date" name="StartDate" class="form-control auto-mandays-start"
+                           min="@subtaskMinDate"
+                           max="@requestDueDate" />
                 </div>
 
                 <div class="col-md-2">
                     <label class="form-label">Due Date</label>
-                    <input type="date" name="DueDate" class="form-control" />
+                    <input type="date" name="DueDate" class="form-control auto-mandays-due"
+                           min="@subtaskMinDate"
+                           max="@requestDueDate" />
                 </div>
 
                 <div class="col-md-2">
-                    <label class="form-label">Man-Days</label>
-                    <input type="number" name="EstimatedManDays" class="form-control" step="0.5" min="0" />
+                    <label class="form-label">Man-Days (Auto)</label>
+                    <input type="text" name="EstimatedManDays" class="form-control auto-mandays-target" readonly />
                 </div>
 
                 <div class="col-md-1">
@@ -230,3 +280,47 @@
     </div>
 
 </div>
+
+@section Scripts {
+
+    <script>
+
+        // Man-days are calculated automatically from each form's
+        // Start Date and Due Date. The user cannot type or increment them.
+        document.querySelectorAll(".auto-mandays-start, .auto-mandays-due").forEach(function (input) {
+
+            input.addEventListener("change", function () {
+
+                const form = this.closest("form");
+
+                if (!form) {
+                    return;
+                }
+
+                const startInput = form.querySelector(".auto-mandays-start");
+                const dueInput = form.querySelector(".auto-mandays-due");
+                const manDaysInput = form.querySelector(".auto-mandays-target");
+
+                if (!startInput || !dueInput || !manDaysInput) {
+                    return;
+                }
+
+                if (!startInput.value || !dueInput.value) {
+                    return;
+                }
+
+                const start = new Date(startInput.value);
+                const due = new Date(dueInput.value);
+                const diffDays = Math.round((due - start) / (1000 * 60 * 60 * 24)) + 1;
+
+                if (diffDays > 0) {
+                    manDaysInput.value = diffDays;
+                }
+
+            });
+
+        });
+
+    </script>
+
+}
