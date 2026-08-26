@@ -100,8 +100,7 @@ namespace RequestForm.Services
                     x.StartDate.HasValue &&
                     ( 
                         x.Status!.StatusName == "Approved by Manager" ||
-                        x.Status!.StatusName == "In Progress" ||
-                        x.Status!.StatusName == "Completed"
+                        x.Status!.StatusName == "In Progress"
                     ))
                 .ToListAsync();
 

@@ -249,9 +249,6 @@ namespace ChangeRequest.Migrations
                     b.Property<decimal?>("ActualManDays")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("AssignedTo")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime?>("CompletedDate")
                         .HasColumnType("datetime2");
 

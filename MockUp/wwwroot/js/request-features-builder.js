@@ -101,23 +101,7 @@ const RequestFeaturesBuilder = (function () {
                             <textarea class="form-control form-control-sm feature-description"
                                       data-feature-index="${fIndex}" rows="2">${escapeHtml(feature.description)}</textarea>
                         </div>
-
-                        <div class="row mb-2">
-                            <div class="col-md-8">
-                                <label class="form-label small">Acceptance Criteria</label>
-                                <input type="text" class="form-control form-control-sm feature-acceptance"
-                                       data-feature-index="${fIndex}" value="${escapeHtml(feature.acceptanceCriteria)}" />
-                            </div>
-                            <div class="col-md-4">
-                                <label class="form-label small">Priority</label>
-                                <select class="form-select form-select-sm feature-priority" data-feature-index="${fIndex}">
-                                    <option ${feature.priority === "Low" ? "selected" : ""}>Low</option>
-                                    <option ${feature.priority === "Medium" ? "selected" : ""}>Medium</option>
-                                    <option ${feature.priority === "High" ? "selected" : ""}>High</option>
-                                </select>
-                            </div>
-                        </div>
-
+                                             
                         <label class="form-label small fw-bold mt-2">Subtasks</label>
 
                         <div class="table-responsive">

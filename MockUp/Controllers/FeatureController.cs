@@ -46,6 +46,22 @@ namespace RequestForm.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Feature feature)
         {
+            var request = await _context.Requests
+                .FirstOrDefaultAsync(r => r.RequestId == feature.RequestId);
+
+            if (request == null)
+                return NotFound();
+
+            if (request.StatusId == 7)
+            {
+                TempData["Error"] =
+                    "Completed requests are read-only and cannot have new features.";
+
+                return RedirectToAction(
+                    nameof(Index),
+                    new { requestId = feature.RequestId });
+            }
+
             if (string.IsNullOrWhiteSpace(feature.Title))
             {
                 TempData["Error"] = "Title is required.";
@@ -55,7 +71,14 @@ namespace RequestForm.Controllers
                     new { requestId = feature.RequestId });
             }
 
-            await _featureService.Create(feature);
+            try
+            {
+                await _featureService.Create(feature);
+            }
+            catch (InvalidOperationException ex)
+            {
+                TempData["Error"] = ex.Message;
+            }
 
             return RedirectToAction(
                 nameof(Index),

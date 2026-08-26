@@ -27,8 +27,7 @@ namespace RequestForm.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            // SubTask has two paths back to Request: directly, and
+                        // SubTask has two paths back to Request: directly, and
             // through Feature. If both cascade-deleted, SQL Server
             // rejects the schema ("multiple cascade paths"). The
             // Feature -> SubTask cascade (default, since FeatureId

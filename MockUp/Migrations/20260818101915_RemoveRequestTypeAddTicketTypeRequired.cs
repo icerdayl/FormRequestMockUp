@@ -12,6 +12,24 @@ namespace ChangeRequest.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            // Convert existing RequestType values into valid TicketType values
+            // BEFORE removing the old RequestTypes table/column.
+            migrationBuilder.Sql(@"
+        UPDATE R
+        SET R.TicketTypeId =
+            CASE RT.RequestTypeName
+                WHEN 'New Website' THEN 2
+                WHEN 'Enhancement' THEN 3
+                WHEN 'Bug Fix' THEN 1
+                WHEN 'Maintenance' THEN 4
+                ELSE 6
+            END
+        FROM Requests R
+        INNER JOIN RequestTypes RT
+            ON R.RequestTypeId = RT.RequestTypeId
+        WHERE R.TicketTypeId IS NULL;
+    ");
+
             migrationBuilder.DropForeignKey(
                 name: "FK_Requests_RequestTypes_RequestTypeId",
                 table: "Requests");
@@ -36,7 +54,6 @@ namespace ChangeRequest.Migrations
                 table: "Requests",
                 type: "int",
                 nullable: false,
-                defaultValue: 0,
                 oldClrType: typeof(int),
                 oldType: "int",
                 oldNullable: true);
