@@ -52,5 +52,5 @@ jobs:
         shell: powershell
         run: |
           Stop-WebAppPool -Name "ChangeRequest"
-          Copy-Item -Path "publish\*" -Destination "C:\Ahiezer\ChangeRequest" -Recurse -Force
+          Copy-Item -Path "publish\*" -Destination "C:\Ahiezer\MockUp\MockUp" -Recurse -Force
           Start-WebAppPool -Name "ChangeRequest"
