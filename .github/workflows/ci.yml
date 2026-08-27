@@ -1,16 +1,14 @@
-name: .NET CI
+name: Build and Deploy to IIS
 
 on:
   push:
     branches:
       - master
-  pull_request:
-    branches:
-      - master
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
@@ -19,13 +17,40 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: '10.0.x'
 
       - name: Restore
-        run: dotnet restore
+        run: dotnet restore .\MockUp\ChangeRequest.csproj
 
       - name: Build
-        run: dotnet build --no-restore --configuration Release
+        run: dotnet build .\MockUp\ChangeRequest.csproj --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test --no-build --configuration Release
+        run: dotnet test .\MockUp\ChangeRequest.csproj --configuration Release --no-build
+
+      - name: Publish
+        run: dotnet publish .\MockUp\ChangeRequest.csproj --configuration Release --output publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: publish
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+          path: publish
+
+      - name: Deploy to IIS folder
+        shell: powershell
+        run: |
+          Stop-WebAppPool -Name "ChangeRequestPool"
+          Copy-Item -Path "publish\*" -Destination "C:\Ahiezer\ChangeRequest" -Recurse -Force
+          Start-WebAppPool -Name "ChangeRequestPool"
