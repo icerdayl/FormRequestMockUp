@@ -22,10 +22,10 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore
-        run: dotnet restore .\ChangeRequest.csproj
+        run: dotnet restore .\MockUp\ChangeRequest.csproj
 
       - name: Build
-        run: dotnet build .\ChangeRequest.csproj --configuration Release --no-restore
+        run: dotnet build .\MockUp\ChangeRequest.csproj --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test .\ChangeRequest.csproj --configuration Release --no-build
+        run: dotnet test .\MockUp\ChangeRequest.csproj --configuration Release --no-build
