@@ -1,0 +1,56 @@
+name: Deploy to IIS
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore
+        run: dotnet restore .\ChangeRequest.csproj
+
+      - name: Build
+        run: dotnet build .\ChangeRequest.csproj --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test .\ChangeRequest.csproj --configuration Release --no-build
+
+      - name: Publish
+        run: dotnet publish .\ChangeRequest.csproj --configuration Release --output publish
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: publish
+
+  deploy:
+    needs: build
+    runs-on: self-hosted
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+          path: publish
+
+      - name: Deploy to IIS folder
+        shell: powershell
+        run: |
+          Stop-WebAppPool -Name "ChangeRequestPool"
+          Copy-Item -Path "publish\*" -Destination "C:\inetpub\wwwroot\ChangeRequestSite" -Recurse -Force
+          Start-WebAppPool -Name "ChangeRequestPool"
