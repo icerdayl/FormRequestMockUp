@@ -51,7 +51,13 @@ jobs:
       - name: Deploy to IIS folder
         shell: powershell
         run: |
-          Import-Module WebAdministration
-          Stop-WebAppPool -Name "ChangeRequestPool"
-          Copy-Item -Path "publish\*" -Destination "C:\inetpub\wwwroot\ChangeRequestSite" -Recurse -Force
-          Start-WebAppPool -Name "ChangeRequestPool"
+          $sitePath = "C:\inetpub\wwwroot\ChangeRequestSite"
+          $offlineFile = Join-Path $sitePath "app_offline.htm"
+
+          New-Item -ItemType Directory -Path $sitePath -Force | Out-Null
+          Set-Content -Path $offlineFile -Value "Application is updating. Please refresh shortly."
+          Start-Sleep -Seconds 5
+
+          Copy-Item -Path "publish\*" -Destination $sitePath -Recurse -Force
+
+          Remove-Item -Path $offlineFile -Force
