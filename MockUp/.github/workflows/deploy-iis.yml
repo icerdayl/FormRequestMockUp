@@ -51,6 +51,7 @@ jobs:
       - name: Deploy to IIS folder
         shell: powershell
         run: |
+          Import-Module WebAdministration
           Stop-WebAppPool -Name "ChangeRequestPool"
           Copy-Item -Path "publish\*" -Destination "C:\inetpub\wwwroot\ChangeRequestSite" -Recurse -Force
           Start-WebAppPool -Name "ChangeRequestPool"
