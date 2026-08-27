@@ -76,13 +76,6 @@
                                         <p class="mb-1">@feature.Description</p>
                                     }
 
-                                    @if (!string.IsNullOrWhiteSpace(feature.AcceptanceCriteria))
-                                    {
-                                        <p class="mb-2 small text-muted">
-                                            <strong>Acceptance Criteria:</strong>
-                                            @feature.AcceptanceCriteria
-                                        </p>
-                                    }
 
                                     @if (totalCount > 0)
                                     {
@@ -203,26 +196,6 @@
                     <label class="form-label">Description</label>
 
                     <textarea id="featureDescription" name="Description" class="form-control" rows="2"></textarea>
-
-                </div>
-
-                <div class="mb-3">
-
-                    <label class="form-label">Acceptance Criteria</label>
-
-                    <textarea name="AcceptanceCriteria" class="form-control" rows="2"></textarea>
-
-                </div>
-
-                <div class="mb-3 col-md-3">
-
-                    <label class="form-label">Priority</label>
-
-                    <select name="Priority" class="form-select">
-                        <option>Low</option>
-                        <option selected>Medium</option>
-                        <option>High</option>
-                    </select>
 
                 </div>
 

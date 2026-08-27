@@ -161,8 +161,6 @@ const RequestFeaturesBuilder = (function () {
         state.push({
             title: title || "",
             description: description || "",
-            acceptanceCriteria: "",
-            priority: "Medium",
             subTasks: (subTaskTitles || []).map(function (t) {
                 return { title: t, startDate: "", dueDate: "", estimatedManDays: null };
             })
@@ -187,9 +185,7 @@ const RequestFeaturesBuilder = (function () {
             .map(function (f) {
                 return {
                     title: f.title,
-                    description: f.description,
-                    acceptanceCriteria: f.acceptanceCriteria,
-                    priority: f.priority,
+                    description: f.description,                    
                     subTasks: f.subTasks
                         .filter(function (s) { return s.title && s.title.trim() !== ""; })
                         .map(function (s) {
@@ -285,8 +281,6 @@ const RequestFeaturesBuilder = (function () {
 
             if (target.classList.contains("feature-title")) feature.title = target.value;
             else if (target.classList.contains("feature-description")) feature.description = target.value;
-            else if (target.classList.contains("feature-acceptance")) feature.acceptanceCriteria = target.value;
-            else if (target.classList.contains("feature-priority")) feature.priority = target.value;
 
         }
     }

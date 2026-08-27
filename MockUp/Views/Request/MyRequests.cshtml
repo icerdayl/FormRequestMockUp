@@ -175,30 +175,7 @@
                                             Edit
 
                                         </a>
-
-                                        @if (item.Status?.StatusName == "Completed")
-                                        {
-                                            <a asp-controller="Feature"
-                                               asp-action="Index"
-                                               asp-route-requestId="@item.RequestId"
-                                               class="btn btn-outline-secondary">
-
-                                                View Features
-
-                                            </a>
-                                        }
-                                        else
-                                        {
-                                            <a asp-controller="Feature"
-                                               asp-action="Index"
-                                               asp-route-requestId="@item.RequestId"
-                                               class="btn btn-outline-primary">
-
-                                                Features
-
-                                            </a>
-                                        }
-
+                                                                                
                                         <a asp-action="Delete"
                                            asp-route-id="@item.RequestId"
                                            class="btn btn-sm btn-outline-danger">
